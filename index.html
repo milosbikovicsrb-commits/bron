@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<title>Бронирование · Лицей</title>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FFFFFF; --surface: #FFFFFF; --surface-2: #F7F7F7; --ink: #1A1A1A; --muted: #6E6E6E; --line: #E7E7E7;
+  --accent: #ED272E; --accent-hover: #D41F26; --accent-ink: #FFFFFF; --accent-soft: #FDEBEC; --warm: #ED272E;
+  --busy: #F2F2F2; --busy-ink: #B4B4B4; --hero: #ED272E; --hero-ink: #FFFFFF; --hero-muted: rgba(255,255,255,.8);
+  --danger: #C81E25; --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 28px rgba(0,0,0,.07);
+  --r: 18px; --serif: 'Cormorant Garamond', Georgia, serif; --sans: 'Manrope', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; }
+button:disabled { cursor: default; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.page { display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); min-height: 100vh; }
+.hero { background: var(--hero); color: var(--hero-ink); padding: 48px 40px; position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column; overflow: hidden; }
+.hero .ornament { position: absolute; right: -120px; bottom: -120px; width: 380px; height: 380px; opacity: .18; pointer-events: none; }
+.hero .kicker { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--hero-muted); }
+.hero h1 { margin: 26px 0 14px; line-height: 0; }
+.hero .logo { width: 100%; max-width: 290px; height: auto; color: var(--hero-ink); }
+.hero .tagline { font: 500 22px/1.3 var(--serif); font-style: italic; color: var(--hero-muted); margin: 0; }
+.hero .facts { margin-top: auto; display: grid; gap: 14px; font-size: 14px; position: relative; }
+.hero .fact { display: flex; gap: 12px; align-items: flex-start; color: var(--hero-ink); }
+.hero .fact svg { flex: none; margin-top: 2px; opacity: .7; }
+.hero .fact a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.45); }
+.hero .week { display: grid; grid-template-columns: auto 1fr; gap: 2px 18px; color: var(--hero-muted); font-size: 13px; }
+.hero .week .now { color: var(--hero-ink); font-weight: 600; }
+
+main { padding: 40px clamp(16px, 4vw, 56px) 0; display: flex; flex-direction: column; min-width: 0; }
+.wrap { width: 100%; max-width: 720px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; }
+
+.steps { display: flex; align-items: center; gap: 10px; margin-bottom: 26px; }
+.back { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--surface);
+  box-shadow: var(--shadow); flex: none; }
+.back:hover { background: var(--surface-2); }
+.dots { display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+.dots .d { display: flex; align-items: center; gap: 8px; }
+.dots .n { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  background: var(--busy); color: var(--muted); }
+.dots .d.on .n { background: var(--accent); color: var(--accent-ink); }
+.dots .d.on { color: var(--ink); font-weight: 600; }
+.dots .d.done .n { background: var(--accent-soft); color: var(--accent); }
+.dots .sep { width: 18px; height: 1px; background: var(--line); }
+
+h2 { font: 600 40px/1.05 var(--serif); margin: 0 0 6px; letter-spacing: -.01em; }
+.lead { color: var(--muted); margin: 0 0 28px; }
+.section { margin-bottom: 30px; }
+.label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.label .hint { text-transform: none; letter-spacing: 0; font-weight: 500; }
+
+.guests { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { min-width: 48px; height: 48px; padding: 0 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line);
+  font-weight: 600; transition: background .15s, border-color .15s, transform .1s; }
+.chip:hover:not(:disabled) { border-color: var(--accent); }
+.chip:active:not(:disabled) { transform: scale(.97); }
+.chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+.dates { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 10px; margin: 0 -2px; scroll-snap-type: x proximity;
+  scrollbar-width: thin; }
+.date { flex: none; width: 68px; padding: 10px 0 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line);
+  display: flex; flex-direction: column; align-items: center; gap: 2px; scroll-snap-align: start; transition: border-color .15s, background .15s; }
+.date:hover:not(:disabled) { border-color: var(--accent); }
+.date .wd { font-size: 12px; color: var(--muted); text-transform: capitalize; }
+.date .dn { font: 600 26px/1 var(--serif); }
+.date .mo { font-size: 11px; color: var(--muted); }
+.date.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.date.on .wd, .date.on .mo { color: var(--accent-ink); opacity: .8; }
+.date.weekend:not(.on) .wd { color: var(--warm); }
+.date:disabled { background: transparent; border-style: dashed; color: var(--busy-ink); }
+.date:disabled .wd, .date:disabled .mo { color: var(--busy-ink); }
+
+.note { padding: 12px 16px; border-radius: 14px; background: var(--accent-soft); color: var(--ink); font-size: 14px; margin-bottom: 16px; }
+.note.warn { background: color-mix(in srgb, var(--warm) 14%, transparent); }
+.slot-group { margin-bottom: 18px; }
+.slot-group h4 { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; }
+.slot { height: 46px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); font-weight: 600;
+  font-variant-numeric: tabular-nums; transition: background .15s, border-color .15s; }
+.slot:hover:not(:disabled) { border-color: var(--accent); }
+.slot.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.slot:disabled { background: var(--busy); border-color: transparent; color: var(--busy-ink); text-decoration: line-through; }
+.skeleton { height: 46px; border-radius: 12px; background: linear-gradient(90deg, var(--busy) 0%, var(--surface-2) 50%, var(--busy) 100%);
+  background-size: 200% 100%; animation: shimmer 1.2s infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.empty { text-align: center; padding: 28px 20px; border: 1px dashed var(--line); border-radius: var(--r); color: var(--muted); }
+.empty b { display: block; color: var(--ink); font: 600 22px/1.2 var(--serif); margin-bottom: 4px; }
+.linkbtn { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+a.linkbtn { white-space: nowrap; }
+
+/* схема */
+.zones { display: inline-flex; padding: 4px; background: var(--busy); border-radius: 14px; gap: 2px; margin-bottom: 14px; }
+.zones button { padding: 8px 16px; border-radius: 10px; font-weight: 600; font-size: 14px; color: var(--muted); }
+.zones button.on { background: var(--surface); color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.zones button small { font-weight: 500; opacity: .7; margin-left: 4px; }
+.any { display: flex; gap: 14px; align-items: center; width: 100%; text-align: left; padding: 16px 18px; border-radius: var(--r);
+  background: var(--surface); border: 1.5px solid var(--line); margin-bottom: 16px; transition: border-color .15s; }
+.any.on { border-color: var(--accent); background: var(--accent-soft); }
+.any .radio { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); flex: none; display: grid; place-items: center; }
+.any.on .radio { border-color: var(--accent); }
+.any.on .radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+.any b { display: block; }
+.any span { color: var(--muted); font-size: 13px; }
+.plan { position: relative; width: 100%; aspect-ratio: 16 / 11; background: var(--surface); border-radius: var(--r); border: 1px solid var(--line);
+  background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 22px 22px; overflow: hidden; }
+.plan .zone-name { position: absolute; left: 16px; top: 12px; font: 600 italic 20px var(--serif); color: var(--muted); }
+.tbl { position: absolute; transform: translate(-50%, -50%); display: grid; place-items: center; }
+.tbl .top { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; border-radius: 10px;
+  background: var(--busy); color: var(--busy-ink); font-weight: 700; font-size: 15px; line-height: 1; transition: background .15s, transform .15s; z-index: 1; }
+.tbl.round .top { border-radius: 50%; }
+.tbl .top small { font-size: 10px; font-weight: 600; opacity: .75; margin-top: 3px; }
+.tbl .chair { position: absolute; width: 22%; aspect-ratio: 1; min-width: 7px; border-radius: 40%; background: var(--busy); transform: translate(-50%, -50%); }
+.tbl.free { cursor: pointer; }
+.tbl.free .top { background: var(--accent-soft); color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.tbl.free .chair { background: color-mix(in srgb, var(--accent) 35%, transparent); }
+.tbl.free:hover .top { transform: scale(1.06); }
+.tbl.sel .top { background: var(--accent); color: var(--accent-ink); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 45%, transparent); }
+.tbl.sel .chair { background: var(--accent); }
+.decor { position: absolute; transform: translate(-50%, -50%); display: grid; place-items: center; text-align: center; border-radius: 8px;
+  background: repeating-linear-gradient(135deg, var(--line) 0 2px, transparent 2px 7px); color: var(--muted); font-size: 11px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase; padding: 2px 4px; line-height: 1.15; pointer-events: none; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin: 12px 2px 0; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; vertical-align: -1px; margin-right: 6px; }
+.tlist { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.tlist .chip { height: 40px; font-size: 14px; font-weight: 500; }
+.tlist .chip b { font-weight: 700; }
+
+/* форма */
+.summary { display: flex; gap: 16px; align-items: center; padding: 16px 18px; border-radius: var(--r); background: var(--surface);
+  border: 1px solid var(--line); margin-bottom: 26px; flex-wrap: wrap; }
+.summary .big { font: 600 30px/1 var(--serif); }
+.summary .info { flex: 1; min-width: 160px; }
+.summary .info div:last-child { color: var(--muted); font-size: 14px; }
+.field { position: relative; margin-bottom: 14px; }
+.field input, .field textarea { width: 100%; padding: 24px 16px 10px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface);
+  outline: none; transition: border-color .15s, box-shadow .15s; font-size: 16px; }
+.field textarea { resize: vertical; min-height: 92px; }
+.field label { position: absolute; left: 17px; top: 17px; color: var(--muted); pointer-events: none; transition: all .15s; font-size: 16px; }
+.field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.field input:focus + label, .field input:not(:placeholder-shown) + label,
+.field textarea:focus + label, .field textarea:not(:placeholder-shown) + label { top: 8px; font-size: 12px; font-weight: 600; }
+.field.bad input { border-color: var(--danger); }
+.field .err { color: var(--danger); font-size: 13px; margin: 6px 4px 0; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.occasions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.occasions .chip { height: 40px; font-weight: 500; font-size: 14px; }
+.consent { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; color: var(--muted); margin: 6px 0 4px; cursor: pointer; }
+.consent input { width: 20px; height: 20px; accent-color: var(--accent); margin: 0; flex: none; }
+.consent a { color: var(--accent); }
+.hintline { font-size: 13px; color: var(--muted); margin: -4px 4px 12px; }
+.tgbox { max-width: 460px; margin: 0 auto 22px; text-align: left; padding: 18px 20px; border-radius: 18px; border: 1.5px solid #229ED9;
+  background: color-mix(in srgb, #229ED9 7%, var(--surface)); }
+.tgbox b { display: block; font-size: 16px; margin-bottom: 4px; }
+.tgbox p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+.tgbox.ok { border-color: var(--line); background: var(--surface-2); display: flex; gap: 10px; align-items: center; font-size: 14px; padding: 12px 16px; }
+.tgbox .wait { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); margin-top: 12px; }
+.btn.tg { background: #229ED9; color: #fff; width: 100%; }
+.btn.tg:hover:not(:disabled) { background: #1b8bc2; }
+.trap { position: absolute; left: -9999px; height: 0; overflow: hidden; }
+
+/* нижняя панель */
+.bar { position: sticky; bottom: 0; margin: 24px calc(-1 * clamp(16px, 4vw, 56px)) 0; padding: 14px clamp(16px, 4vw, 56px) calc(14px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line); z-index: 5; }
+.bar .in { max-width: 720px; margin: 0 auto; display: flex; gap: 16px; align-items: center; }
+.bar .sum { flex: 1; min-width: 0; font-size: 14px; color: var(--muted); }
+.bar .sum b { display: block; color: var(--ink); font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn { height: 54px; padding: 0 28px; border-radius: 16px; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 16px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: background .15s, transform .1s, opacity .15s; white-space: nowrap; text-decoration: none; }
+.btn:hover:not(:disabled) { background: var(--accent-hover); }
+.btn:active:not(:disabled) { transform: scale(.98); }
+.btn:disabled { opacity: .4; }
+.btn.ghost { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn.danger { background: transparent; color: var(--danger); border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent); }
+.spin { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid currentColor; border-right-color: transparent; animation: rot .7s linear infinite; }
+@keyframes rot { to { transform: rotate(360deg); } }
+
+/* готово */
+.done { text-align: center; padding-top: 12px; }
+.check { width: 84px; height: 84px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; margin: 0 auto 22px;
+  animation: pop .5s cubic-bezier(.2,1.4,.4,1) both; }
+.check.off { background: var(--busy); color: var(--muted); }
+.check svg path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw .45s .25s ease forwards; }
+@keyframes pop { from { transform: scale(.4); opacity: 0; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.ticket { text-align: left; background: var(--surface); border-radius: 22px; box-shadow: var(--shadow); border: 1px solid var(--line); margin: 26px auto 22px; max-width: 460px; overflow: hidden; }
+.ticket .t-top { padding: 22px 24px; border-bottom: 1.5px dashed var(--line); position: relative; }
+.ticket .t-top::before, .ticket .t-top::after { content: ''; position: absolute; bottom: -11px; width: 22px; height: 22px; border-radius: 50%; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); }
+.ticket .t-top::before { left: -11px; } .ticket .t-top::after { right: -11px; }
+.ticket .when { font: 600 34px/1.05 var(--serif); }
+.ticket .when small { display: block; font: 500 15px var(--sans); color: var(--muted); margin-top: 6px; }
+.ticket .when small::first-letter { text-transform: uppercase; }
+.ticket .t-grid { display: grid; grid-template-columns: repeat(3, 1fr); padding: 18px 24px 22px; gap: 10px; }
+.ticket .t-grid div span { display: block; font-size: 12px; color: var(--muted); }
+.ticket .t-grid div b { font-size: 17px; }
+.pill { display: inline-block; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; background: var(--accent-soft); color: var(--accent); }
+.pill.off { background: var(--busy); color: var(--muted); }
+.actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.small { font-size: 13px; color: var(--muted); max-width: 440px; margin: 18px auto 0; }
+
+.toast { position: fixed; left: 50%; bottom: 100px; transform: translate(-50%, 20px); opacity: 0; background: var(--ink); color: var(--bg);
+  padding: 12px 18px; border-radius: 14px; font-size: 14px; max-width: calc(100% - 32px); box-shadow: var(--shadow); transition: all .25s; z-index: 50; pointer-events: none; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.fade { animation: fade .3s ease both; }
+@keyframes fade { from { opacity: 0; transform: translateY(8px); } }
+
+@media (max-width: 900px) {
+  .page { grid-template-columns: 1fr; }
+  .hero { position: relative; height: auto; padding: 28px 16px 26px; }
+  .hero h1 { margin: 12px 0 8px; }
+  .hero .logo { max-width: 190px; }
+  .hero .tagline { font-size: 18px; }
+  .hero .facts { margin-top: 18px; gap: 8px; font-size: 13px; }
+  .hero .week, .hero .ornament { display: none; }
+  main { padding: 24px 16px 0; }
+  .bar { margin: 24px -16px 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
+  h2 { font-size: 32px; }
+  .lead { margin-bottom: 22px; }
+}
+@media (max-width: 520px) {
+  .row2 { grid-template-columns: 1fr; gap: 0; }
+  .btn { padding: 0 20px; }
+  .dots .txt { display: none; }
+  .dots .d.on .txt { display: inline; }
+  .ticket .t-grid div b { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <aside class="hero" id="hero"></aside>
+  <main><div class="wrap" id="app"></div></main>
+</div>
+<div class="toast" id="toast"></div>
+<template id="logo-src"><svg class="logo" role="img" aria-label="Лицей" viewBox="0 0 687 254" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M679.1 20.7001C678.5 21.1 621.3 58.1 592.1 71.2C590.5 71.9 589.1 72.5 587.9 73L607.3 37.6L597.3 32.2001C596.9 32.6 556.6 69.8 543.9 80L561.3 48.2001L551.3 42.8C550.9 43.2001 512.8 80.3001 481.2 96.8001C477.1 99.0001 470.2 102.6 466.6 101.5C472.7 97.6001 484.5 90.1001 494 82.5C501.5 76.6 507.6 68.7001 501.2 60.8001C497.4 56.1001 488.5 54 478.2 60.6L478.1 60.7C472.7 64.4 464.6 71.6001 457 87.3001C455.5 90.5001 454.3 93.4001 453.8 96.0001C448.2 99.6001 435 108.8 426.8 114.4L435.8 103.4L426.5 98.0001L409.1 112.1C408.7 112.4 408.3 112.7 407.9 112.9L426.7 80.1001L416.8 74.5C416.4 74.9 375.5 111.6 362.1 122.4L380.2 91.1L370.3 85.5001C369.9 85.8001 332.7 116.9 302.1 136.9C301.9 137 301.8 137.1 301.6 137.2L319.7 105L309.7 99.5001C309.3 99.9001 269.3 136.6 256.2 147.3L274.2 115.5L264.3 110C263.9 110.3 225.6 148.4 192.5 168.3C189.9 169.7 187.8 170.9 186 171.8C199.3 148.3 239.3 77.4001 239.7 76.6001C236.707 74.0945 233.248 71.7478 230.5 69C145 152.5 41.5 219.3 0.899963 244.1L6.59996 253.5C43.7 230.8 133.1 173.2 213.9 99.8001C197 129.6 173.6 171 171.7 174.1C169 178.7 169 182.5 171.6 185.1C175.8 189.4 183.8 187.3 198.1 178.4C210.5 171.3 236.6 150.9 249 137.5L241.1 151.8C237.4 158.3 240.3 161.8 241.7 163C243 164.1 244.6 164.7 246.4 164.7C250.4 164.7 255.7 162 262.9 156.3C268.7 151.7 283.9 138 295.6 127.4L287.2 140.8C283.8 146.7 286 150.1 287.5 151.5C288.9 152.8 290.5 153.4 292.4 153.4C296.6 153.4 302.1 150.4 309.3 145.7C325.3 135.2 342.6 122 355.7 111.6L347.1 126.8C343.4 133.3 346.3 136.8 347.7 138C349 139.1 350.6 139.7 352.4 139.7C356.4 139.7 361.7 137 368.9 131.3C374.8 126.7 389.9 113.1 401.9 102.5L393.8 115.4C390.1 121.9 393.4 125.5 394.5 126.5C398.1 129.7 404 128.2 412.2 123.1L410.9 125.6C405.8 129.1 403 130.7 402 131.4C396.1 136 395.1 141.4 396.1 145C397 148.2 399.5 150.4 402.6 150.8C402.9 150.8 403.3 150.9 403.6 150.9C406.1 150.9 410.1 149.7 413.6 143.6L419.6 132.9C422.8 130.7 426.4 128.3 429.9 125.8C439.1 119.5 449 112.7 456.2 107.7C457.6 109.4 459.8 111.1 463.1 112.2C464.8 112.7 466.5 113 468.2 113C474.8 113 481.4 109.5 486.5 106.9C503.4 98.1 524.8 80.2 538.6 68.5L529 84.3C525.4 90.8 528.3 94.2001 529.7 95.4C531 96.5 532.6 97.1 534.4 97.1C538.4 97.1 543.7 94.4 550.9 88.7001C556.8 84.1001 570.6 70.8 582.2 60.4001L575.4 73.1001C572.4 78.5001 573.7 81.7 575.4 83.5C576.9 85.1001 578.7 85.9 581 85.9C584.8 85.9 590.1 83.9001 597.8 80.4001C627.8 66.9001 684 30.6 686.4 29.1L679.1 20.7001ZM485.4 69.8C487.9 68.1001 491.2 67.1 492 68.2C492.8 69.3 490.4 71.6001 488.1 73.3C486.3 74.7001 468.5 87.5001 468.5 87.5001C474.3 78.6001 482.7 71.7001 485.4 69.8Z" fill="currentColor"/>
+<path d="M604.2 6.40005L594.3 0.800049C578.5 15.6 569 32.2001 568.5 33L578.1 38.3C578.2 38.1 588.2 20.6 604.2 6.40005Z" fill="currentColor"/>
+</svg>
+</template>
+
+<script type="text/plain" id="main-js">
+const BOOT = window.__BOOT__ || null;
+const LOGO = document.getElementById('logo-src').innerHTML;
+const C = BOOT.config;
+const WD = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+const WD_FULL = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'];
+const DAYS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+const MON = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const MON_S = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+const OCCASIONS = ['День рождения', 'Свидание', 'Деловая встреча', 'Семейный обед', 'Годовщина'];
+const ZONES = [...new Set(C.tables.map(t => t.zone))];
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const plural = (n, a, b, c) => { const x = Math.abs(n) % 100, y = x % 10; return x > 10 && x < 20 ? c : y === 1 ? a : y >= 2 && y <= 4 ? b : c; };
+const guestsTxt = n => n + ' ' + plural(n, 'гость', 'гостя', 'гостей');
+const parts = d => { const [y, m, dd] = d.split('-').map(Number); return { y, m, d: dd }; };
+const wdOf = d => { const p = parts(d); return (new Date(Date.UTC(p.y, p.m - 1, p.d)).getUTCDay() + 6) % 7; };
+const dateLong = d => WD_FULL[wdOf(d)] + ', ' + parts(d).d + ' ' + MON[parts(d).m - 1];
+const dateShort = d => WD[wdOf(d)] + ', ' + parts(d).d + ' ' + MON_S[parts(d).m - 1];
+const relDay = d => d === C.dates[0].date ? 'Сегодня' : C.dates[1] && d === C.dates[1].date ? 'Завтра' : '';
+const mins = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+
+const ICON = {
+  back: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+  next: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  pin: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  clock: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  phone: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>',
+  check: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  cross: '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>',
+  cal: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  link: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg>',
+};
+
+/** Сервер: на отдельной странице (BOOKING_API) — запрос к Apps Script без Google-аккаунта гостя,
+ *  внутри Apps Script — google.script.run. */
+const API = window.BOOKING_API || '';
+function call(fn, ...args) {
+  if (API) {
+    return fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args: args }) })
+      .then(r => r.json())
+      .then(r => { if (r.error) throw new Error(r.error); return r.result; });
+  }
+  return new Promise((resolve, reject) => {
+    google.script.run.withSuccessHandler(resolve)
+      .withFailureHandler(e => reject(new Error(String((e && e.message) || e).replace(/^(Error|Exception):\s*/, ''))))[fn](...args);
+  });
+}
+
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 4200);
+}
+
+const firstOpen = C.dates.find(d => d.open);
+const st = {
+  step: BOOT.manage ? 'manage' : 1,
+  guests: Math.min(2, C.maxGuests),
+  date: firstOpen ? firstOpen.date : null,
+  time: null, table: null, zone: ZONES[0],
+  slots: {}, sending: false, errors: {},
+  form: { name: '', phone: '', tg: '', noTg: false, occasion: '', wish: '', consent: false },
+  done: null, manage: BOOT.manage, confirmCancel: false,
+};
+
+// ---------- шапка ----------
+
+function renderHero() {
+  const todayWd = wdOf(C.dates[0].date);
+  $('#hero').innerHTML = `
+    <svg class="ornament" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1">
+      ${[20, 40, 60, 80, 100].map(r => `<circle cx="100" cy="100" r="${r}"/>`).join('')}
+      <path d="M100 0v200M0 100h200M29 29l142 142M171 29L29 171"/>
+    </svg>
+    <div class="kicker">Бронирование стола</div>
+    <h1>${LOGO}</h1>
+    ${C.tagline ? `<p class="tagline">${esc(C.tagline)}</p>` : ''}
+    <div class="facts">
+      ${C.address ? `<div class="fact">${ICON.pin}<span>${esc(C.address)}</span></div>` : ''}
+      ${C.hours[todayWd] ? `<div class="fact">${ICON.clock}<span>Сегодня ${esc(C.hours[todayWd])}</span></div>` : ''}
+      ${C.phone ? `<div class="fact">${ICON.phone}<a href="tel:${esc(C.phone.replace(/[^\d+]/g, ''))}">${esc(C.phone)}</a></div>` : ''}
+      <div class="week">${DAYS.map((d, i) => `<span class="${i === todayWd ? 'now' : ''}">${d}</span><span class="${i === todayWd ? 'now' : ''}">${esc(C.hours[i] || 'закрыто')}</span>`).join('')}</div>
+    </div>`;
+}
+
+// ---------- шаги ----------
+
+function stepsHtml() {
+  const names = ['Время', 'Стол', 'Контакты'];
+  return `<div class="steps">
+    ${st.step > 1 ? `<button class="back" data-act="back" aria-label="Назад">${ICON.back}</button>` : ''}
+    <div class="dots">${names.map((n, i) => {
+      const k = i + 1;
+      return (i ? '<span class="sep"></span>' : '') +
+        `<span class="d ${k === st.step ? 'on' : k < st.step ? 'done' : ''}"><span class="n">${k}</span><span class="txt">${n}</span></span>`;
+    }).join('')}</div>
+  </div>`;
+}
+
+function slotKey() { return st.date + '|' + st.guests; }
+function curSlots() { return st.slots[slotKey()]; }
+function curSlot() { const s = curSlots(); return s && s.slots ? s.slots.find(x => x.time === st.time) : null; }
+
+function loadSlots(force) {
+  if (!st.date) return;
+  const key = slotKey();
+  if (!force && st.slots[key] && st.slots[key] !== 'error') return;
+  st.slots[key] = 'loading';
+  call('guestSlots', st.date, st.guests).then(res => {
+    st.slots[key] = res;
+    if (key === slotKey()) {
+      const s = res.slots.find(x => x.time === st.time);
+      if (!s || !s.free.length) st.time = null;
+      if (st.table && !(s && s.free.includes(st.table))) st.table = null;
+      render();
+    }
+  }).catch(err => {
+    st.slots[key] = 'error';
+    if (key === slotKey()) { render(); toast(err.message); }
+  });
+}
+
+function step1() {
+  const max = C.maxGuests;
+  const chips = [];
+  for (let n = 1; n <= Math.min(max, 10); n++) chips.push(n);
+  const s = curSlots();
+  let times;
+  if (!st.date) {
+    times = `<div class="empty"><b>Онлайн-бронь пока закрыта</b>${C.phone ? 'Позвоните нам: ' + esc(C.phone) : ''}</div>`;
+  } else if (!s || s === 'loading') {
+    times = `<div class="slots">${'<div class="skeleton"></div>'.repeat(12)}</div>`;
+  } else if (s === 'error') {
+    times = `<div class="empty"><b>Не получилось загрузить время</b><button class="linkbtn" data-act="retry">Попробовать ещё раз</button></div>`;
+  } else if (!s.slots.some(x => x.free.length)) {
+    const next = C.dates.find(d => d.open && d.date > st.date);
+    times = (s.note ? `<div class="note">${esc(s.note)}</div>` : '') +
+      `<div class="empty"><b>На этот день мест нет</b>${next ? `Ближайший свободный день можно посмотреть — <button class="linkbtn" data-date="${next.date}">${dateShort(next.date)}</button>` : 'Попробуйте выбрать другой день'}</div>`;
+  } else {
+    const groups = [['Утро', 0, 720], ['День', 720, 1020], ['Вечер', 1020, 1441]];
+    times = (s.note ? `<div class="note">${esc(s.note)}</div>` : '') + groups.map(([name, a, b]) => {
+      const list = s.slots.filter(x => { const m = mins(x.time); return m >= a && m < b; });
+      if (!list.length) return '';
+      return `<div class="slot-group"><h4>${name}</h4><div class="slots">${list.map(x =>
+        `<button class="slot ${x.time === st.time ? 'on' : ''}" data-time="${x.time}" ${x.free.length ? '' : 'disabled aria-label="' + x.time + ' занято"'}>${x.time}</button>`).join('')}</div></div>`;
+    }).join('');
+  }
+  return `<div class="${fadeCls()}">
+    <h2>Забронировать стол</h2>
+    <p class="lead">Выберите день, время и количество гостей — свободные столы покажем на схеме зала.</p>
+    <div class="section">
+      <div class="label">Гостей</div>
+      <div class="guests">${chips.map(n => `<button class="chip ${n === st.guests ? 'on' : ''}" data-guests="${n}">${n}</button>`).join('')}
+        <button class="chip" data-act="more">${max}+</button></div>
+    </div>
+    <div class="section">
+      <div class="label">Дата <span class="hint">${st.date ? esc(dateLong(st.date)) : ''}</span></div>
+      <div class="dates" id="dates">${C.dates.map(d => {
+        const p = parts(d.date), w = wdOf(d.date);
+        return `<button class="date ${d.date === st.date ? 'on' : ''} ${w >= 5 ? 'weekend' : ''}" data-date="${d.date}" ${d.open ? '' : 'disabled title="Нет свободного времени"'}>
+          <span class="wd">${relDay(d.date) || WD[w]}</span><span class="dn">${p.d}</span><span class="mo">${MON_S[p.m - 1]}</span></button>`;
+      }).join('')}</div>
+    </div>
+    <div class="section">
+      <div class="label">Время <span class="hint">стол — на ${durTxt()}</span></div>
+      ${times}
+    </div>
+  </div>`;
+}
+
+function durTxt() {
+  const h = C.dur / 60;
+  return Number.isInteger(h) ? h + ' ' + plural(h, 'час', 'часа', 'часов') : C.dur + ' мин';
+}
+
+function tableSize(t) {
+  if (t.shape === 'rect') return { w: 16 + 3 * Math.ceil(Math.max(0, t.max - 4) / 2), h: 10.5 };
+  const s = t.max <= 2 ? 10 : t.max <= 4 ? 12.5 : 15;
+  return { w: s, h: s };
+}
+
+/** Стулья вокруг стола: координаты в % от размеров стола. */
+function chairs(t) {
+  const n = Math.min(t.max, 14), out = [];
+  if (t.shape === 'round') {
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+      out.push([50 + 66 * Math.cos(a), 50 + 66 * Math.sin(a)]);
+    }
+    return out;
+  }
+  let ends = 0;
+  if (t.shape === 'rect') ends = n >= 6 ? 2 : 0;
+  else ends = n >= 3 ? 2 : 0;
+  if (t.shape === 'square' && n === 2) return [[50, -16], [50, 116]];
+  const sides = n - ends, top = Math.ceil(sides / 2), bottom = sides - top;
+  for (let i = 0; i < top; i++) out.push([(i + 1) / (top + 1) * 100, -16]);
+  for (let i = 0; i < bottom; i++) out.push([(i + 1) / (bottom + 1) * 100, 116]);
+  if (ends) { out.push([-16 * (t.shape === 'rect' ? .66 : 1), 50]); out.push([100 + 16 * (t.shape === 'rect' ? .66 : 1), 50]); }
+  return out;
+}
+
+
+/** Размер стола на схеме: из листа «Столы» (ширина/высота, %) или по числу мест. */
+function tableBox(t) {
+  if (t.w && t.h) return `width:${t.w}%;height:${t.h}%`;
+  const { w, h } = tableSize(t);
+  return `width:${w}%;aspect-ratio:${w}/${h}`;
+}
+
+/** Где у стола больше свободного места: стулья сверху-снизу ('tb') или по бокам ('lr'). Схема 16:11. */
+function chairSides(t, all) {
+  if (!(t.w && t.h) || t.shape === 'round') return '';
+  const box = u => ({ l: (u.x - u.w / 2) * 16, r: (u.x + u.w / 2) * 16, t: (u.y - u.h / 2) * 11, b: (u.y + u.h / 2) * 11 });
+  const a = box(t);
+  let gx = Math.min(a.l, 1600 - a.r), gy = Math.min(a.t, 1100 - a.b);
+  (all || []).forEach(o => {
+    if (o === t || !(o.w && o.h)) return;
+    const b = box(o);
+    if (b.t < a.b && a.t < b.b) gx = Math.min(gx, Math.max(0, b.l - a.r, a.l - b.r));
+    if (b.l < a.r && a.l < b.r) gy = Math.min(gy, Math.max(0, b.t - a.b, a.t - b.b));
+  });
+  return gx < gy ? 'tb' : 'lr';
+}
+
+function chairsHtml(t, all) {
+  const cw = (22 * Math.min(1, 13 / (t.w || tableSize(t).w))).toFixed(1);
+  const sides = chairSides(t, all);
+  let pts = chairs(t);
+  if (sides) {
+    const n = Math.min(t.max, 14), k1 = Math.ceil(n / 2), k2 = n - k1;
+    const line = (k, fixed, along) => Array.from({ length: k }, (_, i) => along ? [fixed, (i + 1) / (k + 1) * 100] : [(i + 1) / (k + 1) * 100, fixed]);
+    const wp = t.w * 16, hp = t.h * 11, m = Math.min(wp, hp);
+    const off = 16 * m / (sides === 'tb' ? hp : wp);
+    pts = sides === 'tb' ? line(k1, -off, false).concat(line(k2, 100 + off, false))
+      : line(k1, -off, true).concat(line(k2, 100 + off, true));
+  }
+  return pts.map(([x, y]) => `<span class="chair" style="left:${x}%;top:${y}%;width:${cw}%"></span>`).join('');
+}
+
+function decorHtml(zone, list) {
+  return (list || []).filter(d => d.zone === zone).map(d =>
+    `<div class="decor" style="left:${d.x}%;top:${d.y}%;width:${d.w || 10}%;height:${d.h || 8}%">${esc(d.label)}</div>`).join('');
+}
+
+function tableHtml(t, free, sel) {
+  const cls = sel ? 'free sel' : free ? 'free' : '';
+  return `<div class="tbl ${t.shape} ${cls}" style="left:${t.x}%;top:${t.y}%;${tableBox(t)}"
+      ${free ? `data-table="${esc(t.id)}" role="button" tabindex="0" aria-label="Стол ${esc(t.id)}, до ${t.max} мест"` : 'aria-hidden="true"'}>
+    ${chairsHtml(t, C.tables.filter(x => x.zone === t.zone).concat((C.decor || []).filter(x => x.zone === t.zone)))}
+    <span class="top">${esc(t.id)}<small>${t.min === t.max ? t.max : t.min + '–' + t.max}</small></span>
+  </div>`;
+}
+
+function step2() {
+  const s = curSlot();
+  const free = new Set(s ? s.free : []);
+  const zoneCount = z => C.tables.filter(t => t.zone === z && free.has(t.id)).length;
+  if (!ZONES.includes(st.zone)) st.zone = ZONES[0];
+  const tables = C.tables.filter(t => t.zone === st.zone);
+  const freeHere = tables.filter(t => free.has(t.id));
+  return `<div class="${fadeCls()}">
+    <h2>Выберите стол</h2>
+    <p class="lead">${esc(dateShort(st.date))}, ${st.time} · ${guestsTxt(st.guests)}. Зелёным отмечены свободные столы для вашей компании.</p>
+    <button class="any ${st.table ? '' : 'on'}" data-act="any"><span class="radio"></span>
+      <span><b>Любой подходящий стол</b><span>Подберём лучший вариант сами</span></span></button>
+    ${ZONES.length > 1 ? `<div class="zones">${ZONES.map(z => `<button class="${z === st.zone ? 'on' : ''}" data-zone="${esc(z)}">${esc(z)}<small>${zoneCount(z)}</small></button>`).join('')}</div>` : ''}
+    <div class="plan">
+      ${ZONES.length > 1 ? `<span class="zone-name">${esc(st.zone)}</span>` : ''}
+      ${decorHtml(st.zone, C.decor)}
+      ${tables.map(t => tableHtml(t, free.has(t.id), st.table === t.id)).join('')}
+    </div>
+    <div class="legend"><span><i style="background:var(--accent-soft);box-shadow:inset 0 0 0 1.5px var(--accent)"></i>Свободен</span>
+      <span><i style="background:var(--accent)"></i>Ваш выбор</span><span><i style="background:var(--busy)"></i>Занят или не подходит</span></div>
+    ${freeHere.length ? `<div class="tlist">${freeHere.map(t => `<button class="chip ${st.table === t.id ? 'on' : ''}" data-table="${esc(t.id)}"><b>Стол ${esc(t.id)}</b>&nbsp;· до ${t.max} мест</button>`).join('')}</div>`
+      : `<div class="note warn" style="margin-top:14px">В зоне «${esc(st.zone)}» на это время свободных столов нет${ZONES.length > 1 ? ' — посмотрите другую зону' : ''}.</div>`}
+  </div>`;
+}
+
+function step3() {
+  const t = st.table ? C.tables.find(x => x.id === st.table) : null;
+  const f = st.form, e = st.errors;
+  return `<div class="${fadeCls()}">
+    <h2>Почти готово</h2>
+    <p class="lead">Оставьте контакты — по ним мы найдём вашу бронь и при необходимости позвоним.</p>
+    <div class="summary">
+      <div class="big">${st.time}</div>
+      <div class="info"><div><b>${esc(dateLong(st.date))}</b></div>
+        <div>${guestsTxt(st.guests)} · ${t ? 'стол ' + esc(t.id) + ', ' + esc(t.zone.toLowerCase()) : 'подберём стол'}</div></div>
+      <button class="linkbtn" data-act="edit">Изменить</button>
+    </div>
+    <form id="form" novalidate autocomplete="on">
+      <div class="row2">
+        <div class="field ${e.name ? 'bad' : ''}"><input id="f-name" name="name" placeholder=" " autocomplete="given-name" maxlength="60" value="${esc(f.name)}"><label for="f-name">Имя</label>${e.name ? `<div class="err">${esc(e.name)}</div>` : ''}</div>
+        <div class="field ${e.phone ? 'bad' : ''}"><input id="f-phone" name="phone" type="tel" inputmode="tel" placeholder=" " autocomplete="tel" value="${esc(f.phone)}"><label for="f-phone">Телефон</label>${e.phone ? `<div class="err">${esc(e.phone)}</div>` : ''}</div>
+      </div>
+      ${C.bot ? `<div class="field ${e.tg ? 'bad' : ''}"><input id="f-tg" name="tg" placeholder=" " autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="45" value="${esc(f.tg)}" ${f.noTg ? 'disabled' : ''}><label for="f-tg">Telegram, @username</label>${e.tg ? `<div class="err">${esc(e.tg)}</div>` : ''}</div>
+      <div class="hintline">Бот пришлёт подтверждение, а за ${C.remindH || 2} ч до визита спросит, всё ли в силе.</div>
+      <label class="consent" style="margin:-4px 0 18px"><input type="checkbox" id="f-notg" ${f.noTg ? 'checked' : ''}><span>У меня нет username — подключу Telegram кнопкой после брони</span></label>` : ''}
+      <div class="label" style="margin-top:8px">Повод <span class="hint">необязательно</span></div>
+      <div class="occasions">${OCCASIONS.map(o => `<button type="button" class="chip ${f.occasion === o ? 'on' : ''}" data-occasion="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+      <div class="field"><textarea id="f-wish" name="wish" placeholder=" " maxlength="300">${esc(f.wish)}</textarea><label for="f-wish">Пожелания: детский стул, аллергия, торт…</label></div>
+      <input class="trap" id="f-site" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label class="consent"><input type="checkbox" id="f-consent" ${f.consent ? 'checked' : ''}>
+        <span>Соглашаюсь на обработку персональных данных${C.policy ? ` согласно <a href="${esc(C.policy)}" target="_blank" rel="noopener">политике</a>` : ''} для бронирования</span></label>
+      ${e.consent ? `<div class="field"><div class="err">${esc(e.consent)}</div></div>` : ''}
+    </form>
+  </div>`;
+}
+
+function doneHtml(v, title, text) {
+  const active = v.status === 'Новая' || v.status === 'Принята' || v.status === 'В зале';
+  const pill = v.status === 'Принята' ? '<span class="pill">Подтверждена</span>'
+    : v.status === 'Новая' ? '<span class="pill">Ждёт подтверждения</span>' : `<span class="pill off">${esc(v.status)}</span>`;
+  const tgBox = !active || !C.bot ? '' : v.tgConnected
+    ? `<div class="tgbox ok">✈️ <span>Telegram подключён${v.tg ? ' (@' + esc(v.tg) + ')' : ''} — статус и напоминание придут в бота.</span></div>`
+    : v.tgLink ? `<div class="tgbox"><b>Последний шаг — подключите Telegram</b>
+        <p>Нажмите кнопку и «Запустить» в боте. Без этого бот не сможет написать вам — так устроен Telegram.</p>
+        <a class="btn tg" href="${esc(v.tgLink)}" target="_blank" rel="noopener">✈️ Подключить Telegram</a>
+        <div class="wait"><span class="spin" style="width:14px;height:14px;border-width:2px"></span>Ждём, когда вы нажмёте «Запустить»…</div></div>` : '';
+  return `<div class="done ${fadeCls()}">
+    <div class="check ${active ? '' : 'off'}">${active ? ICON.check : ICON.cross}</div>
+    <h2>${title}</h2>
+    <p class="lead" style="max-width:460px;margin:0 auto">${text}</p>
+    <div class="ticket">
+      <div class="t-top"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:13px;color:var(--muted)">Бронь №${esc(v.id)} · ${esc(v.restaurant || C.name)}</span>${pill}</div>
+        <div class="when">${esc(v.time)}<small>${esc(dateLong(v.date))}</small></div></div>
+      <div class="t-grid">
+        <div><span>Гостей</span><b>${v.guests}</b></div>
+        <div><span>Стол</span><b>${esc(v.table || '—')}</b></div>
+        <div><span>Зона</span><b>${esc(v.zone || '—')}</b></div>
+      </div>
+    </div>
+    ${tgBox}
+    <div class="actions">
+      ${active ? `<a class="btn ghost" href="${calUrl(v)}" target="_blank" rel="noopener">${ICON.cal} В календарь</a>
+        <button class="btn ghost" data-act="copy">${ICON.link} Ссылка на бронь</button>` : ''}
+      ${v.canCancel ? (st.confirmCancel
+        ? `<button class="btn danger" data-act="cancel-yes">${st.sending ? '<span class="spin"></span>' : 'Да, отменить'}</button><button class="btn ghost" data-act="cancel-no">Не отменять</button>`
+        : `<button class="btn danger" data-act="cancel">Отменить бронь</button>`) : ''}
+    </div>
+    ${active ? `<p class="small">Если планы изменятся — отмените бронь по ссылке или позвоните${v.phone ? ' <a class="linkbtn" href="tel:' + esc(v.phone.replace(/[^\d+]/g, '')) + '">' + esc(v.phone) + '</a>' : ''}. Стол держим 15 минут после начала брони.</p>` : ''}
+    ${!active || st.step === 'manage' ? `<p style="margin-top:22px"><button class="linkbtn" data-act="new">Новая бронь</button></p>` : ''}
+  </div>`;
+}
+
+function doneTexts(v, manage) {
+  const phone = C.phone ? ` или позвоните нам: <a class="linkbtn" href="tel:${esc(C.phone.replace(/[^\d+]/g, ''))}">${esc(C.phone)}</a>` : '';
+  switch (v.status) {
+    case 'Новая': return [manage ? 'Ваша заявка' : 'Заявка отправлена!', 'Ресторан подтвердит бронь в ближайшее время' + (v.tgConnected ? ' — ответ придёт в Telegram.' : '. Подключите Telegram, чтобы получить ответ.')];
+    case 'Принята': return ['Ждём вас, ' + esc(v.name) + '!', 'Бронь подтверждена. За ' + (C.remindH || 2) + ' ч до визита напомним в Telegram.'];
+    case 'Отклонена': return ['Бронь не принята', 'К сожалению, ресторан не может принять бронь' + (v.reason ? ': ' + esc(v.reason) : '') + '. Выберите другое время' + phone + '.'];
+    case 'Отменена': return ['Бронь отменена', 'Будем рады видеть вас в другой раз.'];
+    default: return ['Ваша бронь', 'Статус: ' + esc(v.status)];
+  }
+}
+
+/** Пока гость подключает бота и ждёт решения ресторана — обновляем бронь раз в 4 секунды (до 15 минут). */
+let pollTimer = null, pollUntil = 0;
+function startPoll() {
+  const v = st.step === 'manage' ? st.manage : st.done;
+  if (!v || v.error || pollTimer) return;
+  pollUntil = Date.now() + 15 * 60 * 1000;
+  const tick = () => {
+    const cur = st.step === 'manage' ? st.manage : st.done;
+    if (!cur || cur.token !== v.token || Date.now() > pollUntil || (cur.tgConnected && cur.status !== 'Новая')) { clearInterval(pollTimer); pollTimer = null; return; }
+    if (document.hidden) return;
+    call('guestPoll', cur.token).then(res => {
+      const now = st.step === 'manage' ? st.manage : st.done;
+      if (!now || now.token !== res.token) return;
+      if (res.status !== now.status || res.tgConnected !== now.tgConnected) {
+        if (st.step === 'manage') st.manage = res; else st.done = res;
+        render();
+        if (res.tgConnected && !now.tgConnected) toast('Telegram подключён ✈️');
+      }
+    }).catch(() => {});
+  };
+  pollTimer = setInterval(tick, 4000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && pollTimer) tick(); });
+}
+
+function calUrl(v) {
+  const d = v.date.replace(/-/g, '');
+  let endDate = d;
+  if (mins(v.end) <= mins(v.time)) { const p = parts(v.date); endDate = new Date(Date.UTC(p.y, p.m - 1, p.d + 1)).toISOString().slice(0, 10).replace(/-/g, ''); }
+  const q = new URLSearchParams({
+    action: 'TEMPLATE', text: 'Стол в «' + (v.restaurant || C.name) + '»',
+    dates: d + 'T' + v.time.replace(':', '') + '00/' + endDate + 'T' + v.end.replace(':', '') + '00',
+    ctz: 'Europe/Moscow', details: 'Бронь №' + v.id + ', ' + guestsTxt(v.guests) + (v.table ? ', стол ' + v.table : '') + '\n' + v.manageUrl,
+    location: v.address || '',
+  });
+  return 'https://calendar.google.com/calendar/render?' + q.toString();
+}
+
+function barHtml() {
+  let sum = '', btn = '';
+  if (st.step === 1) {
+    sum = st.time ? `<b>${esc(dateShort(st.date))}, ${st.time}</b>${guestsTxt(st.guests)}` : `<b>${st.date ? esc(dateShort(st.date)) : '—'}</b>Выберите время`;
+    btn = `<button class="btn" data-act="next" ${st.time ? '' : 'disabled'}>Выбрать стол ${ICON.next}</button>`;
+  } else if (st.step === 2) {
+    sum = `<b>${st.table ? 'Стол ' + esc(st.table) : 'Любой стол'}</b>${esc(dateShort(st.date))}, ${st.time} · ${guestsTxt(st.guests)}`;
+    btn = `<button class="btn" data-act="next">Далее ${ICON.next}</button>`;
+  } else if (st.step === 3) {
+    sum = `<b>${esc(dateShort(st.date))}, ${st.time}</b>${guestsTxt(st.guests)}${st.table ? ' · стол ' + esc(st.table) : ''}`;
+    btn = `<button class="btn" data-act="submit" ${st.sending ? 'disabled' : ''}>${st.sending ? '<span class="spin"></span> Бронируем…' : 'Забронировать'}</button>`;
+  } else return '';
+  return `<div class="bar"><div class="in"><div class="sum">${sum}</div>${btn}</div></div>`;
+}
+
+let renderedStep = null;
+const fadeCls = () => st.step === renderedStep ? '' : 'fade';
+
+function render() {
+  const app = $('#app');
+  const dates = $('#dates');
+  const scroll = dates ? dates.scrollLeft : null;
+  let body;
+  if (st.step === 'manage') {
+    const m = st.manage;
+    body = m.error ? `<div class="empty ${fadeCls()}" style="margin-top:40px"><b>${esc(m.error)}</b>Проверьте ссылку или <button class="linkbtn" data-act="new">забронируйте заново</button></div>`
+      : doneHtml(m, ...doneTexts(m, true));
+  } else if (st.step === 4) {
+    const v = st.done;
+    body = doneHtml(v, ...doneTexts(v, false));
+  } else {
+    body = stepsHtml() + (st.step === 1 ? step1() : st.step === 2 ? step2() : step3());
+  }
+  app.innerHTML = body + barHtml();
+  renderedStep = st.step;
+  const d2 = $('#dates');
+  if (d2) {
+    if (scroll !== null) d2.scrollLeft = scroll;
+    else { const on = d2.querySelector('.on'); if (on && on.offsetLeft > d2.clientWidth - 80) d2.scrollLeft = on.offsetLeft - 16; }
+  }
+  if (st.step === 1) loadSlots();
+  if (st.step === 4 || st.step === 'manage') startPoll();
+}
+
+function go(step) {
+  st.step = step;
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function maskPhone(v) {
+  let d = v.replace(/\D/g, '');
+  if (d[0] === '8' || d[0] === '7') d = d.slice(1);
+  d = d.slice(0, 10);
+  if (!d) return v.trim().startsWith('+') ? '+7 ' : '';
+  let out = '+7 (' + d.slice(0, 3);
+  if (d.length >= 3) out += ') ' + d.slice(3, 6);
+  if (d.length >= 6) out += '-' + d.slice(6, 8);
+  if (d.length >= 8) out += '-' + d.slice(8, 10);
+  return out;
+}
+
+function normTg(s) {
+  s = String(s || '').trim().replace(/^(https?:\/\/)?(t\.me|telegram\.me)\//i, '').replace(/^@/, '');
+  return /^[A-Za-z][A-Za-z0-9_]{4,31}$/.test(s) ? s : '';
+}
+
+function validate() {
+  const f = st.form, e = {};
+  if (f.name.trim().length < 2) e.name = 'Как к вам обращаться?';
+  if (f.phone.replace(/\D/g, '').length !== 11) e.phone = 'Нужен номер из 10 цифр после +7';
+  if (C.bot && !f.noTg) {
+    const tg = normTg(f.tg);
+    if (!f.tg.trim()) e.tg = 'Укажите Telegram — туда придут подтверждение и напоминание';
+    else if (!tg) e.tg = 'Нужен @username латиницей, 5–32 символа';
+  }
+  if (!f.consent) e.consent = 'Отметьте согласие — без него мы не можем сохранить бронь';
+  st.errors = e;
+  return !Object.keys(e).length;
+}
+
+function submit() {
+  if (st.sending) return;
+  if (!validate()) { render(); const bad = $('.field.bad input'); if (bad) bad.focus(); return; }
+  st.sending = true;
+  render();
+  call('guestBook', {
+    date: st.date, time: st.time, guests: st.guests, table: st.table || '',
+    name: st.form.name, phone: st.form.phone, occasion: st.form.occasion, wish: st.form.wish,
+    tg: st.form.noTg ? '' : st.form.tg, noTg: !C.bot || st.form.noTg,
+    consent: st.form.consent, website: ($('#f-site') || {}).value || '',
+  }).then(res => {
+    st.sending = false;
+    st.done = res;
+    st.slots = {};
+    try { localStorage.setItem('booking-guest', JSON.stringify({ name: st.form.name, phone: st.form.phone, tg: st.form.tg })); } catch (e) { /* приватный режим */ }
+    go(4);
+  }).catch(err => {
+    st.sending = false;
+    toast(err.message);
+    if (/занял|недоступ|разобрали/.test(err.message)) { delete st.slots[slotKey()]; st.time = null; st.table = null; go(1); }
+    else render();
+  });
+}
+
+function cancelBooking() {
+  const v = st.step === 'manage' ? st.manage : st.done;
+  st.sending = true;
+  render();
+  call('guestCancel', v.token).then(res => {
+    st.sending = false;
+    st.confirmCancel = false;
+    if (st.step === 'manage') st.manage = res; else st.done = res;
+    render();
+  }).catch(err => { st.sending = false; st.confirmCancel = false; render(); toast(err.message); });
+}
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act],[data-guests],[data-date],[data-time],[data-zone],[data-table],[data-occasion]');
+  if (!el || el.disabled) return;
+  const d = el.dataset;
+  if (d.guests) { st.guests = +d.guests; render(); return; }
+  if (d.date) { st.date = d.date; render(); return; }
+  if (d.time) { st.time = d.time; render(); return; }
+  if (d.zone) { st.zone = d.zone; render(); return; }
+  if (d.table) { st.table = st.table === d.table ? null : d.table; render(); return; }
+  if (d.occasion) { e.preventDefault(); st.form.occasion = st.form.occasion === d.occasion ? '' : d.occasion; render(); return; }
+  switch (d.act) {
+    case 'back': go(st.step - 1); break;
+    case 'edit': go(1); break;
+    case 'retry': loadSlots(true); render(); break;
+    case 'more': toast(C.phone ? 'Для компании больше ' + C.maxGuests + ' человек позвоните нам: ' + C.phone : 'Для большой компании свяжитесь с рестораном'); break;
+    case 'any': st.table = null; render(); break;
+    case 'next':
+      if (st.step === 1) {
+        const s = curSlot();
+        if (!s || !s.free.length) return;
+        if (st.table && !s.free.includes(st.table)) st.table = null;
+        const zoneWithFree = ZONES.find(z => C.tables.some(t => t.zone === z && s.free.includes(t.id)));
+        if (!C.tables.some(t => t.zone === st.zone && s.free.includes(t.id)) && zoneWithFree) st.zone = zoneWithFree;
+        go(2);
+      } else go(3);
+      break;
+    case 'submit': submit(); break;
+    case 'copy': {
+      const v = st.step === 'manage' ? st.manage : st.done;
+      const done = () => toast('Ссылка скопирована — по ней можно открыть или отменить бронь');
+      if (navigator.clipboard) navigator.clipboard.writeText(v.manageUrl).then(done, () => prompt('Ссылка на бронь:', v.manageUrl));
+      else prompt('Ссылка на бронь:', v.manageUrl);
+      break;
+    }
+    case 'cancel': st.confirmCancel = true; render(); break;
+    case 'cancel-no': st.confirmCancel = false; render(); break;
+    case 'cancel-yes': cancelBooking(); break;
+    case 'new': st.step = 1; st.time = null; st.table = null; st.done = null; st.manage = null; st.confirmCancel = false; render(); break;
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.tbl[data-table]')) { e.preventDefault(); e.target.click(); }
+  if (e.key === 'Enter' && e.target.matches('#form input')) { e.preventDefault(); submit(); }
+});
+
+document.addEventListener('input', e => {
+  const id = e.target.id;
+  if (id === 'f-name') st.form.name = e.target.value;
+  if (id === 'f-wish') st.form.wish = e.target.value;
+  if (id === 'f-phone') {
+    const masked = maskPhone(e.target.value);
+    e.target.value = masked;
+    st.form.phone = masked;
+  }
+  if (id === 'f-consent') st.form.consent = e.target.checked;
+  if (id === 'f-tg') st.form.tg = e.target.value;
+  if (st.errors[id.slice(2)]) { delete st.errors[id.slice(2)]; e.target.closest('.field')?.classList.remove('bad'); e.target.closest('.field')?.querySelector('.err')?.remove(); }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'f-notg') { st.form.noTg = e.target.checked; delete st.errors.tg; render(); }
+  if (e.target.id === 'f-consent') { st.form.consent = e.target.checked; if (st.errors.consent) { delete st.errors.consent; render(); } }
+});
+
+try {
+  const saved = JSON.parse(localStorage.getItem('booking-guest') || 'null');
+  if (saved) { st.form.name = saved.name || ''; st.form.phone = saved.phone || ''; st.form.tg = saved.tg || ''; }
+} catch (e) { /* нет доступа к хранилищу */ }
+
+renderHero();
+render();
+</script>
+<script>
+window.BOOKING_API = 'https://script.google.com/macros/s/AKfycbwItXTjwO1YLe_Ii2HHGlEk98PuG1MVhB9IumvDWhrVyhf9itU9Dy7I-dwn8YBJPwCMvA/exec';
+(function () {
+  var q = new URLSearchParams(location.search), url = window.BOOKING_API + '?api=boot';
+  ['b', 'key', 'date', 'id'].forEach(function (k) { if (q.get(k)) url += '&' + k + '=' + encodeURIComponent(q.get(k)); });
+  fetch(url).then(function (r) { return r.json(); }).then(function (j) {
+    if (j.error) throw new Error(j.error);
+    window.__BOOT__ = j.result;
+    var s = document.createElement('script');
+    s.textContent = document.getElementById('main-js').textContent;
+    document.body.appendChild(s);
+  }).catch(function (e) {
+    document.body.innerHTML = '<div style="padding:48px 20px;font:16px/1.5 system-ui,sans-serif;text-align:center;color:#333">' +
+      '<b>Не удалось загрузить страницу</b><br>' + String(e.message || e).replace(/</g, '&lt;') +
+      '<br><br>Обновите страницу через минуту.</div>';
+  });
+})();
+</script>
+</body>
+</html>

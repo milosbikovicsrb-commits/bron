@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<title>Хостес · Лицей</title>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F5F5; --surface: #FFFFFF; --surface-2: #F7F7F7; --ink: #1A1A1A; --muted: #6E6E6E; --line: #E4E4E4; --line-2: #EFEFEF;
+  --accent: #ED272E; --accent-ink: #fff; --accent-soft: #FDEBEC;
+  --s-new: #C7861C; --s-new-bg: #FBEFD9; --s-ok: #2F7A57; --s-ok-bg: #DFF0E6; --s-in: #3E55A3; --s-in-bg: #E2E7F7;
+  --s-done: #8C8C8C; --s-done-bg: #ECECEC; --s-rej: #B42318; --s-rej-bg: #FDE8E7; --s-no: #3C3C3C; --s-no-bg: #DADADA; --s-cancel: #A6A6A6; --s-cancel-bg: #F0F0F0;
+  --now: #ED272E; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 10px 30px rgba(0,0,0,.09);
+  --serif: 'Cormorant Garamond', Georgia, serif; --sans: 'Manrope', system-ui, -apple-system, sans-serif;
+}
+:root[data-theme="dark"] {
+  --bg: #121212; --surface: #1B1B1B; --surface-2: #161616; --ink: #EDEDED; --muted: #9A9A9A; --line: #2D2D2D; --line-2: #232323;
+  --accent: #FF4B51; --accent-ink: #fff; --accent-soft: #3A1B1C;
+  --s-new: #E6AE55; --s-new-bg: #3A2F1B; --s-ok: #6FC296; --s-ok-bg: #1C3328; --s-in: #93A8EE; --s-in-bg: #232C4A;
+  --s-done: #8E8E8E; --s-done-bg: #262626; --s-rej: #F97066; --s-rej-bg: #3B1D1B; --s-no: #CFCFCF; --s-no-bg: #3A3A3A; --s-cancel: #6E6E6E; --s-cancel-bg: #222;
+  --now: #FF4B51; --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 30px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.45 var(--sans); -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; }
+button:disabled { opacity: .45; cursor: default; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ico { width: 18px; height: 18px; flex: none; }
+
+/* верх */
+.top { display: flex; align-items: center; gap: 14px; padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.brand { display: flex; align-items: baseline; gap: 10px; margin-right: 6px; }
+.brand .logo { height: 34px; width: auto; color: var(--accent); display: block; }
+.brand { align-items: center !important; }
+.brand span { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.datenav { display: flex; align-items: center; gap: 4px; }
+.ibtn { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--ink); }
+.ibtn:hover { background: var(--surface-2); }
+.datebtn { position: relative; padding: 6px 12px; border-radius: 10px; font-weight: 700; font-size: 15px; min-width: 200px; text-align: center; }
+.datebtn:hover { background: var(--surface-2); }
+.datebtn small { display: block; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+.datebtn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.today-btn { padding: 7px 12px; border-radius: 10px; border: 1px solid var(--line); font-weight: 600; font-size: 13px; }
+.today-btn:hover { background: var(--surface-2); }
+.stats { display: flex; gap: 6px; margin-left: 6px; }
+.stat { padding: 5px 12px; border-radius: 10px; background: var(--surface-2); font-size: 12px; color: var(--muted); line-height: 1.2; }
+.stat b { display: block; font-size: 17px; color: var(--ink); }
+.spacer { flex: 1; }
+.search { position: relative; }
+.search input { height: 38px; width: 220px; border-radius: 11px; border: 1px solid var(--line); background: var(--surface-2); padding: 0 12px 0 36px; outline: none; }
+.search input:focus { border-color: var(--accent); background: var(--surface); }
+.search .ico { position: absolute; left: 11px; top: 10px; color: var(--muted); }
+.btn { height: 38px; padding: 0 16px; border-radius: 11px; background: var(--accent); color: var(--accent-ink); font-weight: 700; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.btn:hover:not(:disabled) { filter: brightness(1.07); }
+.btn.ghost { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+.btn.ghost:hover { background: var(--surface-2); filter: none; }
+.btn.sm { height: 32px; padding: 0 12px; font-size: 13px; border-radius: 9px; }
+.btn.danger { background: transparent; color: var(--s-no); border: 1px solid color-mix(in srgb, var(--s-no) 35%, transparent); }
+
+.week { display: flex; gap: 6px; padding: 10px 20px; overflow-x: auto; background: var(--surface); border-bottom: 1px solid var(--line); scrollbar-width: none; }
+.week::-webkit-scrollbar { display: none; }
+.wday { flex: none; width: 62px; padding: 6px 0 7px; border-radius: 11px; text-align: center; border: 1px solid transparent; line-height: 1.15; }
+.wday:hover { background: var(--surface-2); }
+.wday .w { font-size: 11px; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: .04em; }
+.wday .n { font-size: 17px; font-weight: 800; }
+.wday .c { font-size: 11px; color: var(--muted); }
+.wday .c b { color: var(--accent); }
+.wday.on { background: var(--accent); color: var(--accent-ink); }
+.wday.on .w, .wday.on .c, .wday.on .c b { color: var(--accent-ink); opacity: .85; }
+.wday.today:not(.on) { border-color: var(--line); }
+.wday.past { opacity: .55; }
+
+.bar2 { display: flex; align-items: center; gap: 12px; padding: 12px 20px 10px; flex-wrap: wrap; }
+.tabs { display: inline-flex; background: var(--line-2); border-radius: 12px; padding: 3px; gap: 2px; }
+.tabs button { padding: 7px 14px; border-radius: 9px; font-weight: 700; color: var(--muted); display: flex; gap: 7px; align-items: center; }
+.tabs button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.legend span { display: flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; }
+.toggle { display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); cursor: pointer; user-select: none; }
+.toggle input { accent-color: var(--accent); }
+.daynote { margin: 0 20px 8px; padding: 9px 14px; border-radius: 11px; background: var(--s-new-bg); color: var(--ink); font-size: 13px; }
+
+.view { flex: 1; min-height: 0; overflow: auto; padding: 0 20px 20px; position: relative; }
+.loading { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  background-size: 50% 100%; background-repeat: no-repeat; animation: load 1s linear infinite; z-index: 100; display: none; }
+.loading.on { display: block; }
+@keyframes load { from { background-position: -50% 0; } to { background-position: 150% 0; } }
+
+/* таймлайн */
+.tl { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: auto; max-height: 100%; position: relative; }
+.tl-grid { position: relative; min-width: max-content; }
+.tl-head { display: flex; position: sticky; top: 0; z-index: 4; background: var(--surface); border-bottom: 1px solid var(--line); }
+.tl-corner { position: sticky; left: 0; z-index: 5; background: var(--surface); width: 150px; flex: none; border-right: 1px solid var(--line);
+  font-size: 11px; color: var(--muted); font-weight: 700; padding: 10px 14px; text-transform: uppercase; letter-spacing: .06em; }
+.tl-hours { position: relative; height: 38px; }
+.tl-hours span { position: absolute; top: 10px; font-size: 12px; font-weight: 700; color: var(--muted); transform: translateX(-50%); font-variant-numeric: tabular-nums; }
+.tl-zone { display: flex; background: var(--surface-2); border-bottom: 1px solid var(--line); }
+.tl-zone div { position: sticky; left: 0; padding: 6px 14px; font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.tl-row { display: flex; height: 54px; border-bottom: 1px solid var(--line-2); }
+.tl-row:hover .tl-label { background: var(--surface-2); }
+.tl-label { position: sticky; left: 0; z-index: 3; width: 150px; flex: none; background: var(--surface); border-right: 1px solid var(--line);
+  padding: 8px 14px; display: flex; flex-direction: column; justify-content: center; }
+.tl-label b { font-size: 14px; }
+.tl-label span { font-size: 12px; color: var(--muted); }
+.tl-label .off { font-size: 10px; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 5px; padding: 0 4px; margin-left: 6px; }
+.tl-track { position: relative; cursor: copy; }
+.tl-lines { position: absolute; inset: 0; pointer-events: none; }
+.tl-lines i { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line-2); }
+.tl-lines i.h { background: var(--line); }
+.blk { position: absolute; top: 5px; bottom: 5px; border-radius: 9px; padding: 5px 9px; overflow: hidden; cursor: pointer; border-left: 3px solid;
+  display: flex; flex-direction: column; justify-content: center; line-height: 1.2; transition: transform .1s, box-shadow .15s; z-index: 1; }
+.blk:hover { box-shadow: var(--shadow); z-index: 2; }
+.blk b { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.blk span { font-size: 11px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.blk.fresh { animation: pulse 1.6s ease 3; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--s-new) 45%, transparent); } }
+.nowline { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--now); z-index: 3; pointer-events: none; }
+.nowline::before { content: attr(data-t); position: sticky; top: 0; display: block; transform: translateX(-50%); background: var(--now); color: #fff; font-size: 11px;
+  font-weight: 800; padding: 1px 6px; border-radius: 6px; width: max-content; margin-left: 1px; }
+.offhours { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, transparent 0 6px, var(--line-2) 6px 7px); pointer-events: none; }
+
+.st-new { background: var(--s-new-bg); border-color: var(--s-new); color: var(--ink); }
+.st-ok { background: var(--s-ok-bg); border-color: var(--s-ok); color: var(--ink); }
+.st-in { background: var(--s-in-bg); border-color: var(--s-in); color: var(--ink); }
+.st-done { background: var(--s-done-bg); border-color: var(--s-done); color: var(--muted); }
+.st-no { background: var(--s-no-bg); border-color: var(--s-no); color: var(--ink); }
+.st-cancel { background: repeating-linear-gradient(135deg, var(--s-cancel-bg) 0 6px, transparent 6px 11px); border-color: var(--s-cancel); color: var(--muted); }
+.st-cancel b { text-decoration: line-through; }
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 800; white-space: nowrap; border: 0; }
+.pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.st-new { color: var(--s-new); } .pill.st-ok { color: var(--s-ok); } .pill.st-in { color: var(--s-in); }
+.st-rej { background: repeating-linear-gradient(135deg, var(--s-rej-bg) 0 6px, transparent 6px 11px); border-color: var(--s-rej); color: var(--muted); }
+.st-rej b { text-decoration: line-through; }
+.pill.st-rej { color: var(--s-rej); background: var(--s-rej-bg); }
+.tag.tg { background: #E3F2FB; border-color: transparent; color: #1B7DB8; }
+.tag.ok { background: var(--s-ok-bg); border-color: transparent; color: var(--s-ok); }
+.tginfo { font-size: 13px; padding: 10px 14px; border-radius: 12px; background: var(--surface-2); margin-bottom: 14px; line-height: 1.6; }
+.tginfo button { color: var(--accent); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.grow { display: grid; grid-template-columns: minmax(150px, 1.3fr) 130px 70px 70px 70px 90px 110px minmax(120px, 1fr); gap: 12px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; cursor: pointer; font-size: 13px; }
+.grow:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.grow.head { background: transparent; border: 0; cursor: default; font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; padding-top: 0; padding-bottom: 0; }
+.grow b { display: block; font-size: 14px; }
+.grow .mut { color: var(--muted); }
+.gstat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+.gstat div { background: var(--surface); border-radius: 10px; padding: 8px 10px; font-size: 11px; color: var(--muted); }
+.gstat b { display: block; font-size: 18px; color: var(--ink); }
+.review { padding: 8px 0; border-bottom: 1px solid var(--line-2); font-size: 13px; }
+.pill.st-done { color: var(--s-done); } .pill.st-no { color: var(--s-no); } .pill.st-cancel { color: var(--s-cancel); background: var(--s-cancel-bg); }
+
+/* схема */
+.floor-bar { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; }
+.floor-bar input[type=range] { flex: 1; min-width: 180px; accent-color: var(--accent); }
+.floor-time { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 64px; }
+.floors { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px; }
+.floor { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px; }
+.floor h3 { margin: 2px 4px 10px; font: 600 22px var(--serif); display: flex; justify-content: space-between; align-items: baseline; }
+.floor h3 small { font: 600 12px var(--sans); color: var(--muted); }
+.plan { position: relative; aspect-ratio: 16 / 11; border-radius: 12px; background: var(--surface-2);
+  background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 22px 22px; touch-action: none; }
+.decor { position: absolute; transform: translate(-50%, -50%); display: grid; place-items: center; text-align: center; border-radius: 8px;
+  background: repeating-linear-gradient(135deg, var(--line) 0 2px, transparent 2px 7px); color: var(--muted); font-size: 11px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase; padding: 2px 4px; line-height: 1.15; pointer-events: none; }
+.plan.editing { outline: 2px dashed var(--accent); outline-offset: -2px; }
+.ft { position: absolute; transform: translate(-50%, -50%); cursor: pointer; }
+.ft .top { position: absolute; inset: 0; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--surface); border: 1.5px solid var(--line); text-align: center; line-height: 1.1; padding: 2px; transition: transform .12s; z-index: 1; overflow: hidden; }
+.ft.round .top { border-radius: 50%; }
+.ft:hover .top { transform: scale(1.05); }
+.ft .top b { font-size: 15px; }
+.ft .top span { font-size: 10px; font-weight: 700; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 3px; }
+.ft .chair { position: absolute; width: 22%; aspect-ratio: 1; min-width: 7px; border-radius: 40%; background: var(--line); transform: translate(-50%, -50%); }
+.ft.f-in .top { background: var(--s-in); border-color: var(--s-in); color: #fff; }
+.ft.f-res .top { background: var(--s-ok); border-color: var(--s-ok); color: #fff; }
+.ft.f-new .top { background: var(--s-new); border-color: var(--s-new); color: #fff; }
+.ft.f-soon .top { border: 2px dashed var(--s-new); background: var(--s-new-bg); }
+.ft.f-in .chair { background: var(--s-in); } .ft.f-res .chair { background: var(--s-ok); } .ft.f-new .chair { background: var(--s-new); }
+.plan.editing .ft { cursor: grab; }
+.plan.editing .ft:active { cursor: grabbing; }
+
+/* список */
+.list { display: grid; gap: 8px; max-width: 1100px; }
+.lgroup { font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin: 12px 4px 2px; }
+.lrow { display: grid; grid-template-columns: 70px minmax(140px, 1.4fr) 90px 80px minmax(120px, 1fr) auto; gap: 14px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; cursor: pointer; }
+.lrow:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.lrow .t { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.lrow .t small { display: block; font-size: 11px; color: var(--muted); font-weight: 600; }
+.lrow .nm b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lrow .nm span { font-size: 12px; color: var(--muted); }
+.lrow .m { color: var(--muted); font-size: 13px; }
+.lrow .m b { color: var(--ink); font-size: 15px; }
+.lrow .tags { font-size: 12px; color: var(--muted); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.lrow .qa { display: flex; gap: 6px; justify-content: flex-end; align-items: center; }
+.tag { display: inline-block; padding: 1px 7px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); font-size: 11px; font-weight: 700; margin-right: 4px; color: var(--ink); }
+.tag.vip { background: var(--s-ok-bg); border-color: transparent; color: var(--s-ok); }
+.tag.warn { background: var(--s-no-bg); border-color: transparent; color: var(--s-no); }
+.empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+.empty b { display: block; font: 600 26px var(--serif); color: var(--ink); margin-bottom: 4px; }
+
+/* панель справа */
+.scrim { position: fixed; inset: 0; background: rgba(15,20,17,.28); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20; }
+.scrim.on { opacity: 1; pointer-events: auto; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(500px, 100%); background: var(--surface); box-shadow: var(--shadow);
+  transform: translateX(105%); transition: transform .25s cubic-bezier(.2,.8,.2,1); z-index: 21; display: flex; flex-direction: column; }
+.drawer.on { transform: none; }
+.dh { padding: 18px 22px 14px; border-bottom: 1px solid var(--line); display: flex; gap: 12px; align-items: flex-start; }
+.dh h2 { margin: 0; font: 600 30px/1.05 var(--serif); }
+.dh .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.db { flex: 1; overflow: auto; padding: 18px 22px 24px; }
+.df { padding: 14px 22px; border-top: 1px solid var(--line); display: flex; gap: 10px; align-items: center; }
+.gcard { background: var(--surface-2); border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; }
+.gcard .gtop { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; }
+.gcard a.ph { font-weight: 800; font-size: 16px; color: var(--accent); text-decoration: none; }
+.gstats { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.gnote { margin-top: 10px; display: flex; gap: 8px; }
+.gnote textarea { flex: 1; min-height: 40px; height: 40px; resize: vertical; }
+.wish { padding: 10px 14px; border-radius: 12px; background: var(--s-new-bg); margin-bottom: 16px; font-size: 13px; }
+.wish b { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--s-new); margin-bottom: 2px; }
+.sactions { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.sbtn { padding: 8px 12px; border-radius: 10px; font-weight: 700; font-size: 13px; border: 1px solid var(--line); background: var(--surface); }
+.sbtn:hover { background: var(--surface-2); }
+.sbtn.cur { border-color: transparent; }
+.sbtn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.fld { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; min-width: 0; }
+.fld > span { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.fld input, .fld select, .fld textarea, .gnote textarea { height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); padding: 0 11px; outline: none; width: 100%; }
+.fld textarea, .gnote textarea { padding: 9px 11px; height: auto; min-height: 64px; resize: vertical; }
+.fld input:focus, .fld select:focus, .fld textarea:focus, .gnote textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.stepper { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; height: 40px; overflow: hidden; }
+.stepper button { width: 38px; height: 100%; font-size: 18px; font-weight: 700; }
+.stepper button:hover { background: var(--surface-2); }
+.stepper input { border: 0 !important; box-shadow: none !important; text-align: center; height: 100%; padding: 0; font-weight: 800; -moz-appearance: textfield; }
+.stepper input::-webkit-inner-spin-button { display: none; }
+.hist { margin-top: 10px; }
+.hist h4 { margin: 18px 0 8px; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.hrow { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line-2); font-size: 13px; align-items: center; }
+.tbook { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
+.tbook:hover { background: var(--surface-2); }
+.tbook .t { font-weight: 800; font-size: 16px; min-width: 96px; font-variant-numeric: tabular-nums; }
+.tbook .n { flex: 1; min-width: 0; }
+
+.toast-wrap { position: fixed; right: 20px; bottom: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 40; align-items: flex-end; }
+.toast { background: var(--ink); color: var(--bg); padding: 12px 16px; border-radius: 13px; box-shadow: var(--shadow); font-size: 13px; max-width: 360px;
+  animation: tin .25s ease both; cursor: pointer; }
+.toast b { display: block; font-size: 14px; }
+@keyframes tin { from { opacity: 0; transform: translateY(10px); } }
+
+@media (max-width: 1100px) {
+  .stats { display: none; }
+  .search input { width: 160px; }
+}
+@media (max-width: 760px) {
+  .grow { grid-template-columns: 1fr auto; }
+  .grow > :nth-child(n+3) { display: none; }
+  .top { padding: 10px 14px; gap: 8px; }
+  .brand .logo { height: 28px; }
+  .datebtn { min-width: 0; flex: 1; }
+  .datenav { order: 3; width: 100%; }
+  .search { order: 4; flex: 1; }
+  .search input { width: 100%; }
+  .week, .bar2 { padding-left: 14px; padding-right: 14px; }
+  .view { padding: 0 14px 14px; }
+  .tl-corner, .tl-label { width: 96px; }
+  .lrow { grid-template-columns: 60px 1fr auto; }
+  .lrow .m, .lrow .tags { display: none; }
+  .lrow .qa .pill { display: none; }
+  .floors { grid-template-columns: 1fr; }
+  .legend { display: none; }
+  .grid3 { grid-template-columns: 1fr 1fr; }
+  .toast-wrap { left: 14px; right: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="loading" id="loading"></div>
+<header class="top">
+  <div class="brand"><svg class="logo" role="img" aria-label="Лицей" viewBox="0 0 687 254" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M679.1 20.7001C678.5 21.1 621.3 58.1 592.1 71.2C590.5 71.9 589.1 72.5 587.9 73L607.3 37.6L597.3 32.2001C596.9 32.6 556.6 69.8 543.9 80L561.3 48.2001L551.3 42.8C550.9 43.2001 512.8 80.3001 481.2 96.8001C477.1 99.0001 470.2 102.6 466.6 101.5C472.7 97.6001 484.5 90.1001 494 82.5C501.5 76.6 507.6 68.7001 501.2 60.8001C497.4 56.1001 488.5 54 478.2 60.6L478.1 60.7C472.7 64.4 464.6 71.6001 457 87.3001C455.5 90.5001 454.3 93.4001 453.8 96.0001C448.2 99.6001 435 108.8 426.8 114.4L435.8 103.4L426.5 98.0001L409.1 112.1C408.7 112.4 408.3 112.7 407.9 112.9L426.7 80.1001L416.8 74.5C416.4 74.9 375.5 111.6 362.1 122.4L380.2 91.1L370.3 85.5001C369.9 85.8001 332.7 116.9 302.1 136.9C301.9 137 301.8 137.1 301.6 137.2L319.7 105L309.7 99.5001C309.3 99.9001 269.3 136.6 256.2 147.3L274.2 115.5L264.3 110C263.9 110.3 225.6 148.4 192.5 168.3C189.9 169.7 187.8 170.9 186 171.8C199.3 148.3 239.3 77.4001 239.7 76.6001C236.707 74.0945 233.248 71.7478 230.5 69C145 152.5 41.5 219.3 0.899963 244.1L6.59996 253.5C43.7 230.8 133.1 173.2 213.9 99.8001C197 129.6 173.6 171 171.7 174.1C169 178.7 169 182.5 171.6 185.1C175.8 189.4 183.8 187.3 198.1 178.4C210.5 171.3 236.6 150.9 249 137.5L241.1 151.8C237.4 158.3 240.3 161.8 241.7 163C243 164.1 244.6 164.7 246.4 164.7C250.4 164.7 255.7 162 262.9 156.3C268.7 151.7 283.9 138 295.6 127.4L287.2 140.8C283.8 146.7 286 150.1 287.5 151.5C288.9 152.8 290.5 153.4 292.4 153.4C296.6 153.4 302.1 150.4 309.3 145.7C325.3 135.2 342.6 122 355.7 111.6L347.1 126.8C343.4 133.3 346.3 136.8 347.7 138C349 139.1 350.6 139.7 352.4 139.7C356.4 139.7 361.7 137 368.9 131.3C374.8 126.7 389.9 113.1 401.9 102.5L393.8 115.4C390.1 121.9 393.4 125.5 394.5 126.5C398.1 129.7 404 128.2 412.2 123.1L410.9 125.6C405.8 129.1 403 130.7 402 131.4C396.1 136 395.1 141.4 396.1 145C397 148.2 399.5 150.4 402.6 150.8C402.9 150.8 403.3 150.9 403.6 150.9C406.1 150.9 410.1 149.7 413.6 143.6L419.6 132.9C422.8 130.7 426.4 128.3 429.9 125.8C439.1 119.5 449 112.7 456.2 107.7C457.6 109.4 459.8 111.1 463.1 112.2C464.8 112.7 466.5 113 468.2 113C474.8 113 481.4 109.5 486.5 106.9C503.4 98.1 524.8 80.2 538.6 68.5L529 84.3C525.4 90.8 528.3 94.2001 529.7 95.4C531 96.5 532.6 97.1 534.4 97.1C538.4 97.1 543.7 94.4 550.9 88.7001C556.8 84.1001 570.6 70.8 582.2 60.4001L575.4 73.1001C572.4 78.5001 573.7 81.7 575.4 83.5C576.9 85.1001 578.7 85.9 581 85.9C584.8 85.9 590.1 83.9001 597.8 80.4001C627.8 66.9001 684 30.6 686.4 29.1L679.1 20.7001ZM485.4 69.8C487.9 68.1001 491.2 67.1 492 68.2C492.8 69.3 490.4 71.6001 488.1 73.3C486.3 74.7001 468.5 87.5001 468.5 87.5001C474.3 78.6001 482.7 71.7001 485.4 69.8Z" fill="currentColor"/>
+<path d="M604.2 6.40005L594.3 0.800049C578.5 15.6 569 32.2001 568.5 33L578.1 38.3C578.2 38.1 588.2 20.6 604.2 6.40005Z" fill="currentColor"/>
+</svg>
+<span>Хостес</span></div>
+  <div class="datenav">
+    <button class="ibtn" data-act="prev" aria-label="Предыдущий день"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <label class="datebtn"><small id="dRel"></small><span id="dLabel"></span><input type="date" id="dInput"></label>
+    <button class="ibtn" data-act="nextday" aria-label="Следующий день"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button class="today-btn" data-act="today">Сегодня</button>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="spacer"></div>
+  <label class="search"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="q" placeholder="Имя, телефон, стол" autocomplete="off"></label>
+  <button class="btn" data-act="new"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Бронь</button>
+  <button class="ibtn" data-act="theme" aria-label="Тема"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button>
+</header>
+<nav class="week" id="week"></nav>
+<div class="bar2">
+  <div class="tabs" id="tabs">
+    <button data-tab="timeline">Таймлайн</button><button data-tab="floor">Схема зала</button><button data-tab="list">Список</button><button data-tab="guests">Гости</button>
+  </div>
+  <label class="toggle"><input type="checkbox" id="showCancel"> отменённые и отклонённые</label>
+  <div class="spacer"></div>
+  <div class="legend">
+    <span><i style="background:var(--s-new)"></i>Новая</span><span><i style="background:var(--s-ok)"></i>Принята</span>
+    <span><i style="background:var(--s-in)"></i>В зале</span><span><i style="background:var(--s-done)"></i>Завершена</span><span><i style="background:var(--s-no)"></i>Не пришёл</span>
+  </div>
+</div>
+<div id="daynote"></div>
+<section class="view" id="view"></section>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true"></aside>
+<div class="toast-wrap" id="toasts"></div>
+
+<script type="text/plain" id="main-js">
+const BOOT = window.__BOOT__ || null;
+const KEY = BOOT.key;
+const ST = { NEW: 'Новая', OK: 'Принята', REJECT: 'Отклонена', IN: 'В зале', DONE: 'Завершена', NOSHOW: 'Не пришёл', CANCEL: 'Отменена' };
+const ACTIVE = [ST.NEW, ST.OK, ST.IN];
+const ST_CLS = { 'Новая': 'st-new', 'Принята': 'st-ok', 'Отклонена': 'st-rej', 'В зале': 'st-in', 'Завершена': 'st-done', 'Не пришёл': 'st-no', 'Отменена': 'st-cancel' };
+const WD = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+const WD_FULL = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'];
+const MON = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const PPM = 1.6; // пикселей на минуту таймлайна
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const plural = (n, a, b, c) => { const x = Math.abs(n) % 100, y = x % 10; return x > 10 && x < 20 ? c : y === 1 ? a : y >= 2 && y <= 4 ? b : c; };
+const hm = m => String(Math.floor(m / 60) % 24).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+const mins = t => { const [h, m] = String(t).split(':').map(Number); return h * 60 + m; };
+const parts = d => { const [y, m, dd] = d.split('-').map(Number); return { y, m, d: dd }; };
+const wdOf = d => { const p = parts(d); return (new Date(Date.UTC(p.y, p.m - 1, p.d)).getUTCDay() + 6) % 7; };
+const addDays = (d, n) => { const p = parts(d); return new Date(Date.UTC(p.y, p.m - 1, p.d + n)).toISOString().slice(0, 10); };
+const dateLong = d => WD_FULL[wdOf(d)] + ', ' + parts(d).d + ' ' + MON[parts(d).m - 1];
+const dateNum = d => { const p = d.split('-'); return p[2] + '.' + p[1] + '.' + p[0].slice(2); };
+const fmtPhone = p => { const d = String(p || '').replace(/\D/g, ''); return d.length === 11 ? '+7 ' + d.slice(1, 4) + ' ' + d.slice(4, 7) + '-' + d.slice(7, 9) + '-' + d.slice(9) : (p || ''); };
+
+const ICON = {
+  close: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  user: '<svg class="ico" style="width:14px;height:14px;vertical-align:-2px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>',
+};
+
+/** Сервер: на отдельной странице (BOOKING_API) — запрос к Apps Script без Google-аккаунта гостя,
+ *  внутри Apps Script — google.script.run. */
+const API = window.BOOKING_API || '';
+function call(fn, ...args) {
+  if (API) {
+    return fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args: [KEY].concat(args) }) })
+      .then(r => r.json())
+      .then(r => { if (r.error) throw new Error(r.error); return r.result; });
+  }
+  return new Promise((resolve, reject) => {
+    google.script.run.withSuccessHandler(resolve)
+      .withFailureHandler(e => reject(new Error(String((e && e.message) || e).replace(/^(Error|Exception):\s*/, ''))))[fn](KEY, ...args);
+  });
+}
+
+function toast(title, text, onClick) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = (text ? `<b>${esc(title)}</b>${esc(text)}` : esc(title));
+  el.onclick = () => { el.remove(); if (onClick) onClick(); };
+  $('#toasts').appendChild(el);
+  setTimeout(() => el.remove(), onClick ? 12000 : 4000);
+}
+
+function beep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, .18].forEach((t, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.value = i ? 1046 : 784; o.type = 'sine';
+      g.gain.setValueAtTime(.0001, ctx.currentTime + t);
+      g.gain.exponentialRampToValueAtTime(.18, ctx.currentTime + t + .02);
+      g.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime + t + .3);
+      o.connect(g).connect(ctx.destination); o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + .32);
+    });
+  } catch (e) { /* звук недоступен */ }
+}
+
+const store = {
+  get(k, def) { try { const v = localStorage.getItem('hostess-' + k); return v === null ? def : JSON.parse(v); } catch (e) { return def; } },
+  set(k, v) { try { localStorage.setItem('hostess-' + k, JSON.stringify(v)); } catch (e) { /* нет хранилища */ } },
+};
+
+const S = {
+  date: BOOT.date || '', data: null, tab: store.get('tab', innerWidth < 760 ? 'list' : 'timeline'),
+  q: '', showCancel: store.get('showCancel', false), floorTime: null, editLayout: false, layoutDirty: {},
+  drawer: null, seen: null, fresh: new Set(), openId: BOOT.id || '', busy: 0,
+};
+document.documentElement.dataset.theme = store.get('theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+$('#showCancel').checked = S.showCancel;
+
+function setBusy(on) { S.busy += on ? 1 : -1; $('#loading').classList.toggle('on', S.busy > 0); }
+
+function loadDay(silent) {
+  const date = S.date;
+  if (!silent) setBusy(true);
+  return call('hostDay', date).then(d => {
+    if (!silent) setBusy(false);
+    if (date !== S.date && S.date) return;
+    const first = !S.data;
+    if (S.seen && d.date === d.today) {
+      d.bookings.forEach(b => {
+        if (!S.seen.has(b.id) && b.source === 'Сайт') {
+          S.fresh.add(b.id);
+          beep();
+          toast('Новая бронь · ' + b.time, b.name + ', ' + b.guests + ' ' + plural(b.guests, 'гость', 'гостя', 'гостей') + (b.table ? ', стол ' + b.table : ''), () => openBooking(b.id));
+        }
+      });
+    }
+    S.seen = S.seen || new Set();
+    d.bookings.forEach(b => S.seen.add(b.id));
+    if (S.answers && d.date === (S.data || {}).date) {
+      d.bookings.forEach(b => {
+        const was = S.answers[b.id];
+        if (was !== undefined && was !== b.answer && (b.answer === 'Придёт' || b.answer === 'Не придёт')) {
+          beep();
+          toast(b.answer === 'Придёт' ? '✓ Гость подтвердил визит' : '✕ Гость не придёт — бронь снята', b.time + ' · ' + b.name, () => openBooking(b.id));
+        }
+      });
+    }
+    S.answers = {};
+    d.bookings.forEach(b => { S.answers[b.id] = b.answer; });
+    S.date = d.date;
+    if (S.data && S.data.date !== d.date) S.floorTime = null;
+    S.data = d;
+    renderAll();
+    if (first) scrollTimelineToNow();
+    if (S.openId) { const id = S.openId; S.openId = ''; openBooking(id); }
+  }).catch(err => {
+    if (!silent) { setBusy(false); toast('Не загрузилось', err.message); }
+  });
+}
+
+// ---------- шапка ----------
+
+function renderTop() {
+  const d = S.data;
+  const rel = d.date === d.today ? 'Сегодня' : d.date === addDays(d.today, 1) ? 'Завтра' : d.date === addDays(d.today, -1) ? 'Вчера' : '';
+  $('#dRel').textContent = rel || WD_FULL[wdOf(d.date)];
+  $('#dLabel').textContent = rel ? dateLong(d.date) : parts(d.date).d + ' ' + MON[parts(d.date).m - 1] + ' ' + parts(d.date).y;
+  $('#dInput').value = d.date;
+  const act = d.bookings.filter(b => ACTIVE.includes(b.status) || b.status === ST.DONE);
+  const guests = act.reduce((s, b) => s + b.guests, 0);
+  const inHall = d.bookings.filter(b => b.status === ST.IN);
+  const pending = d.bookings.filter(b => b.status === ST.NEW).length;
+  $('#stats').innerHTML = `
+    <div class="stat"><b>${act.length}</b>${plural(act.length, 'бронь', 'брони', 'броней')}</div>
+    <div class="stat"><b>${guests}</b>${plural(guests, 'гость', 'гостя', 'гостей')}</div>
+    <div class="stat"><b>${inHall.reduce((s, b) => s + b.guests, 0)}</b>в зале</div>
+    ${pending ? `<div class="stat" style="background:var(--s-new-bg)"><b style="color:var(--s-new)">${pending}</b>не подтв.</div>` : ''}`;
+  $('#week').innerHTML = d.week.map(w => {
+    const p = parts(w.date);
+    return `<button class="wday ${w.date === d.date ? 'on' : ''} ${w.date === d.today ? 'today' : ''} ${w.date < d.today ? 'past' : ''}" data-date="${w.date}">
+      <div class="w">${w.date === d.today ? 'сегодня' : WD[w.wd - 1]}</div><div class="n">${p.d}</div>
+      <div class="c">${w.count ? `<b>${w.count}</b> · ${w.guests} ${ICON.user}` : '—'}</div></button>`;
+  }).join('');
+  [...$('#tabs').children].forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
+  $('#daynote').innerHTML = !d.hours ? `<div class="daynote">По графику ресторан в этот день закрыт для онлайн-брони${d.note ? ': ' + esc(d.note) : ''}. Вручную бронировать можно.</div>`
+    : d.note ? `<div class="daynote">${esc(d.note)}</div>` : '';
+}
+
+function visible() {
+  const q = S.q.trim().toLowerCase();
+  const qd = q.replace(/\D/g, '');
+  return S.data.bookings.filter(b => {
+    if (!S.showCancel && (b.status === ST.CANCEL || b.status === ST.REJECT)) return false;
+    if (!q) return true;
+    return b.name.toLowerCase().includes(q) || (qd.length >= 3 && b.phone.replace(/\D/g, '').includes(qd)) ||
+      String(b.table).toLowerCase() === q || ('стол ' + b.table).toLowerCase() === q;
+  });
+}
+
+function dayRange() {
+  const h = S.data.hours;
+  const list = S.data.bookings;
+  let a = h ? h.open : 9 * 60, z = h ? h.close : 23 * 60;
+  list.forEach(b => { a = Math.min(a, b.start); z = Math.max(z, b.start + b.dur); });
+  return { a: Math.floor(a / 60) * 60, z: Math.min(24 * 60, Math.ceil(z / 60) * 60) };
+}
+
+function zones() {
+  return [...new Set(S.data.tables.map(t => t.zone))];
+}
+
+/** Telegram, ответ гостя на напоминание, оценка, причина отказа. */
+function bookTags(b) {
+  let out = '';
+  if (b.status === ST.REJECT && b.reason) out += `<span class="tag warn">${esc(b.reason)}</span>`;
+  if (b.answer === 'Придёт') out += '<span class="tag ok">✓ подтвердил визит</span>';
+  else if (b.answer === 'Не придёт') out += '<span class="tag warn">✕ не придёт</span>';
+  else if (b.answer === 'Запрошено') out += isStarted(b) ? '<span class="tag warn">нет ответа</span>' : '<span class="tag">⏳ ждём ответ</span>';
+  if (b.status === ST.NEW || b.status === ST.OK) {
+    out += b.tgConnected ? '<span class="tag tg">✈️ бот</span>' : b.tg ? `<span class="tag">✈️ @${esc(b.tg)} — не подкл.</span>` : '<span class="tag">без Telegram</span>';
+  }
+  if (b.rating) out += `<span class="tag">★ ${esc(b.rating)}</span>`;
+  return out;
+}
+
+function isStarted(b) {
+  return b.date < S.data.today || (b.date === S.data.today && S.data.now >= b.start);
+}
+
+function answerIcon(b) {
+  return b.answer === 'Придёт' ? '✓ ' : b.answer === 'Не придёт' ? '✕ ' : b.answer === 'Запрошено' ? '? ' : '';
+}
+
+function guestTags(phone, big) {
+  const g = phone && S.data.guests[phone];
+  if (!g) return '';
+  let out = '';
+  if (g.visits >= 5) out += `<span class="tag vip">★ постоянный · ${g.visits}</span>`;
+  else if (g.visits) out += `<span class="tag">${g.visits} ${plural(g.visits, 'визит', 'визита', 'визитов')}</span>`;
+  else if (big) out += '<span class="tag">первый визит</span>';
+  if (g.noShows) out += `<span class="tag warn">неявок: ${g.noShows}</span>`;
+  if (g.note && !big) out += `<span class="tag">📝 ${esc(g.note.slice(0, 40))}</span>`;
+  return out;
+}
+
+// ---------- таймлайн ----------
+
+function renderTimeline() {
+  const d = S.data, { a, z } = dayRange(), W = (z - a) * PPM;
+  const list = visible();
+  const rows = [];
+  const unassigned = list.filter(b => !b.table || !d.tables.some(t => t.id === b.table));
+  if (unassigned.length) rows.push({ zone: 'Без стола' }, { id: '', label: 'Без стола', sub: unassigned.length + ' ' + plural(unassigned.length, 'бронь', 'брони', 'броней'), items: unassigned });
+  zones().forEach(zn => {
+    rows.push({ zone: zn });
+    d.tables.filter(t => t.zone === zn).forEach(t => rows.push({ id: t.id, label: 'Стол ' + t.id, sub: (t.min === t.max ? t.max : t.min + '–' + t.max) + ' мест', off: !t.online, items: list.filter(b => b.table === t.id) }));
+  });
+  let lines = '';
+  for (let m = a; m <= z; m += 30) lines += `<i class="${m % 60 ? '' : 'h'}" style="left:${(m - a) * PPM}px"></i>`;
+  let off = '';
+  if (d.hours) {
+    if (d.hours.open > a) off += `<div class="offhours" style="left:0;width:${(d.hours.open - a) * PPM}px"></div>`;
+    if (d.hours.close < z) off += `<div class="offhours" style="left:${(d.hours.close - a) * PPM}px;width:${(z - d.hours.close) * PPM}px"></div>`;
+  }
+  let hours = '';
+  for (let m = a; m <= z; m += 60) hours += `<span style="left:${(m - a) * PPM}px">${hm(m)}</span>`;
+  const now = d.date === d.today && d.now >= a && d.now <= z ? `<div class="nowline" data-t="${hm(d.now)}" style="left:${150 + (d.now - a) * PPM}px"></div>` : '';
+  $('#view').innerHTML = `<div class="tl" id="tl"><div class="tl-grid">
+    <div class="tl-head"><div class="tl-corner">Стол</div><div class="tl-hours" style="width:${W}px">${hours}</div></div>
+    ${rows.map(r => r.zone ? `<div class="tl-zone"><div>${esc(r.zone)}</div></div>` : `
+      <div class="tl-row">
+        <div class="tl-label"><b>${esc(r.label)}${r.off ? '<span class="off">не онлайн</span>' : ''}</b><span>${esc(r.sub)}</span></div>
+        <div class="tl-track" data-track="${esc(r.id)}" style="width:${W}px"><div class="tl-lines">${lines}</div>${off}
+          ${r.items.map(b => blockHtml(b, a)).join('')}</div>
+      </div>`).join('')}
+    ${now}
+  </div></div>`;
+  if (innerWidth < 760) { const n = $('.nowline'); if (n) n.style.left = (96 + (d.now - a) * PPM) + 'px'; }
+}
+
+function blockHtml(b, a) {
+  const w = Math.max(40, b.dur * PPM - 4);
+  return `<div class="blk ${ST_CLS[b.status] || ''} ${S.fresh.has(b.id) ? 'fresh' : ''}" data-id="${esc(b.id)}" style="left:${(b.start - a) * PPM + 2}px;width:${w}px"
+    title="${esc(b.time + '–' + hm(b.start + b.dur) + ' · ' + b.name + ' · ' + b.guests + ' гост. · ' + b.status)}">
+    <b>${answerIcon(b)}${esc(b.name)}</b><span>${ICON.user} ${b.guests} · ${esc(b.time)}–${hm(b.start + b.dur)}${b.occasion ? ' · ' + esc(b.occasion) : ''}</span></div>`;
+}
+
+function scrollTimelineToNow() {
+  const tl = $('#tl');
+  if (!tl || !S.data) return;
+  const { a } = dayRange();
+  const target = S.data.date === S.data.today ? S.data.now - 60 : (S.data.bookings[0] ? Math.min(...S.data.bookings.map(b => b.start)) - 30 : a);
+  tl.scrollLeft = Math.max(0, (target - a) * PPM);
+}
+
+// ---------- схема ----------
+
+function tableSize(t) {
+  if (t.shape === 'rect') return { w: 16 + 3 * Math.ceil(Math.max(0, t.max - 4) / 2), h: 10.5 };
+  const s = t.max <= 2 ? 10 : t.max <= 4 ? 12.5 : 15;
+  return { w: s, h: s };
+}
+
+function chairs(t) {
+  const n = Math.min(t.max, 14), out = [];
+  if (t.shape === 'round') {
+    for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2 - Math.PI / 2; out.push([50 + 66 * Math.cos(a), 50 + 66 * Math.sin(a)]); }
+    return out;
+  }
+  if (t.shape === 'square' && n === 2) return [[50, -16], [50, 116]];
+  const ends = t.shape === 'rect' ? (n >= 6 ? 2 : 0) : (n >= 3 ? 2 : 0);
+  const sides = n - ends, top = Math.ceil(sides / 2), bottom = sides - top;
+  for (let i = 0; i < top; i++) out.push([(i + 1) / (top + 1) * 100, -16]);
+  for (let i = 0; i < bottom; i++) out.push([(i + 1) / (bottom + 1) * 100, 116]);
+  if (ends) { const k = t.shape === 'rect' ? .66 : 1; out.push([-16 * k, 50]); out.push([100 + 16 * k, 50]); }
+  return out;
+}
+
+/** Размер стола на схеме: из листа «Столы» (ширина/высота, %) или по числу мест. */
+function tableBox(t) {
+  if (t.w && t.h) return `width:${t.w}%;height:${t.h}%`;
+  const { w, h } = tableSize(t);
+  return `width:${w}%;aspect-ratio:${w}/${h}`;
+}
+
+/** Где у стола больше свободного места: стулья сверху-снизу ('tb') или по бокам ('lr'). Схема 16:11. */
+function chairSides(t, all) {
+  if (!(t.w && t.h) || t.shape === 'round') return '';
+  const box = u => ({ l: (u.x - u.w / 2) * 16, r: (u.x + u.w / 2) * 16, t: (u.y - u.h / 2) * 11, b: (u.y + u.h / 2) * 11 });
+  const a = box(t);
+  let gx = Math.min(a.l, 1600 - a.r), gy = Math.min(a.t, 1100 - a.b);
+  (all || []).forEach(o => {
+    if (o === t || !(o.w && o.h)) return;
+    const b = box(o);
+    if (b.t < a.b && a.t < b.b) gx = Math.min(gx, Math.max(0, b.l - a.r, a.l - b.r));
+    if (b.l < a.r && a.l < b.r) gy = Math.min(gy, Math.max(0, b.t - a.b, a.t - b.b));
+  });
+  return gx < gy ? 'tb' : 'lr';
+}
+
+function chairsHtml(t, all) {
+  const cw = (22 * Math.min(1, 13 / (t.w || tableSize(t).w))).toFixed(1);
+  const sides = chairSides(t, all);
+  let pts = chairs(t);
+  if (sides) {
+    const n = Math.min(t.max, 14), k1 = Math.ceil(n / 2), k2 = n - k1;
+    const line = (k, fixed, along) => Array.from({ length: k }, (_, i) => along ? [fixed, (i + 1) / (k + 1) * 100] : [(i + 1) / (k + 1) * 100, fixed]);
+    const wp = t.w * 16, hp = t.h * 11, m = Math.min(wp, hp);
+    const off = 16 * m / (sides === 'tb' ? hp : wp);
+    pts = sides === 'tb' ? line(k1, -off, false).concat(line(k2, 100 + off, false))
+      : line(k1, -off, true).concat(line(k2, 100 + off, true));
+  }
+  return pts.map(([x, y]) => `<span class="chair" style="left:${x}%;top:${y}%;width:${cw}%"></span>`).join('');
+}
+
+function decorHtml(zone, list) {
+  return (list || []).filter(d => d.zone === zone).map(d =>
+    `<div class="decor" style="left:${d.x}%;top:${d.y}%;width:${d.w || 10}%;height:${d.h || 8}%">${esc(d.label)}</div>`).join('');
+}
+
+/** Что происходит за столом в момент T: в зале / забронирован / скоро бронь / свободен. */
+function tableState(t, T) {
+  const act = S.data.bookings.filter(b => b.table === t.id && ACTIVE.includes(b.status)).sort((x, y) => x.start - y.start);
+  const live = S.data.date === S.data.today && Math.abs(T - S.data.now) < 15;
+  const inHall = act.find(b => b.status === ST.IN && (live || (b.start <= T && T < b.start + b.dur)));
+  if (inHall) return { cls: 'f-in', b: inHall, text: inHall.name };
+  const cur = act.find(b => b.status !== ST.IN && b.start <= T && T < b.start + b.dur);
+  if (cur) return { cls: cur.status === ST.NEW ? 'f-new' : 'f-res', b: cur, text: cur.time + ' ' + cur.name };
+  const soon = act.find(b => b.status !== ST.IN && b.start > T && b.start - T <= 90);
+  if (soon) return { cls: 'f-soon', b: soon, text: 'в ' + soon.time };
+  return { cls: '', b: null, text: '' };
+}
+
+function renderFloor() {
+  const d = S.data, { a, z } = dayRange();
+  if (S.floorTime === null) S.floorTime = d.date === d.today ? Math.max(a, Math.min(z, d.now)) : Math.max(a, Math.min(z - 60, 19 * 60));
+  const T = S.floorTime;
+  $('#view').innerHTML = `
+    <div class="floor-bar">
+      <div class="floor-time">${hm(T)}</div>
+      <input type="range" id="ftime" min="${a}" max="${z}" step="15" value="${T}">
+      ${d.date === d.today ? '<button class="btn ghost sm" data-act="floor-now">Сейчас</button>' : ''}
+      ${S.editLayout ? `<button class="btn sm" data-act="layout-save">Сохранить схему</button><button class="btn ghost sm" data-act="layout-cancel">Отмена</button>`
+        : '<button class="btn ghost sm" data-act="layout-edit">Расставить столы</button>'}
+    </div>
+    <div class="floors">${zones().map(zn => {
+      const tables = d.tables.filter(t => t.zone === zn);
+      const busy = tables.filter(t => tableState(t, T).cls && tableState(t, T).cls !== 'f-soon').length;
+      return `<div class="floor"><h3>${esc(zn)}<small>занято ${busy} из ${tables.length}</small></h3>
+        <div class="plan ${S.editLayout ? 'editing' : ''}" data-zone="${esc(zn)}">${decorHtml(zn, d.decor)}${tables.map(t => {
+          const s = S.editLayout ? { cls: '', text: '' } : tableState(t, T);
+          const p = S.layoutDirty[t.id] || t;
+          return `<div class="ft ${t.shape} ${s.cls}" data-ft="${esc(t.id)}" style="left:${p.x}%;top:${p.y}%;${tableBox(t)}">
+            ${chairsHtml(t, tables.concat((d.decor || []).filter(x => x.zone === zn)))}
+            <span class="top"><b>${esc(t.id)}</b>${s.text ? `<span>${esc(s.text)}</span>` : `<span style="opacity:.55">${t.min === t.max ? t.max : t.min + '–' + t.max}</span>`}</span></div>`;
+        }).join('')}</div></div>`;
+    }).join('')}</div>`;
+}
+
+// ---------- список ----------
+
+function renderList() {
+  const list = visible().slice().sort((x, y) => x.start - y.start || String(x.table).localeCompare(String(y.table), 'ru', { numeric: true }));
+  if (!list.length) {
+    $('#view').innerHTML = `<div class="empty"><b>${S.q ? 'Ничего не нашлось' : 'Броней нет'}</b>${S.q ? 'Попробуйте другое имя или номер' : 'Нажмите «+ Бронь», чтобы добавить'}</div>`;
+    return;
+  }
+  const groups = [
+    ['В зале', list.filter(b => b.status === ST.IN)],
+    ['Ожидаем', list.filter(b => b.status === ST.NEW || b.status === ST.OK)],
+    ['Завершены и отмены', list.filter(b => !ACTIVE.includes(b.status))],
+  ];
+  $('#view').innerHTML = '<div class="list">' + groups.filter(g => g[1].length).map(([name, items]) =>
+    `<div class="lgroup">${name} · ${items.length}</div>` + items.map(b => `
+      <div class="lrow" data-id="${esc(b.id)}">
+        <div class="t">${esc(b.time)}<small>до ${hm(b.start + b.dur)}</small></div>
+        <div class="nm"><b>${answerIcon(b)}${esc(b.name)}${b.tgConnected ? ' <span title="Telegram подключён">✈️</span>' : ''}</b><span>${esc(fmtPhone(b.phone)) || esc(b.source)}</span></div>
+        <div class="m"><b>${b.guests}</b> ${plural(b.guests, 'гость', 'гостя', 'гостей')}</div>
+        <div class="m">${b.table ? `стол <b>${esc(b.table)}</b>` : '<span style="color:var(--s-no)">без стола</span>'}</div>
+        <div class="tags">${bookTags(b)}${guestTags(b.phone)}${b.occasion ? `<span class="tag">🎉 ${esc(b.occasion)}</span>` : ''}${esc(b.wish || '')}</div>
+        <div class="qa"><span class="pill ${ST_CLS[b.status]}">${esc(b.status)}</span>${quickBtn(b)}</div>
+      </div>`).join('')).join('') + '</div>';
+}
+
+function quickBtn(b) {
+  if (b.status === ST.NEW) return `<button class="btn sm" data-quick="${esc(b.id)}" data-to="${ST.OK}">Принять</button>`;
+  if (b.status === ST.OK) return `<button class="btn sm" data-quick="${esc(b.id)}" data-to="${ST.IN}">Пришли</button>`;
+  if (b.status === ST.IN) return `<button class="btn ghost sm" data-quick="${esc(b.id)}" data-to="${ST.DONE}">Ушли</button>`;
+  return '';
+}
+
+function renderView() {
+  if (!S.data) return;
+  const tl = $('#tl');
+  const scroll = tl ? [tl.scrollLeft, tl.scrollTop] : null;
+  if (S.tab === 'timeline') renderTimeline();
+  else if (S.tab === 'floor') renderFloor();
+  else if (S.tab === 'guests') renderGuests();
+  else renderList();
+  const tl2 = $('#tl');
+  if (tl2 && scroll) { tl2.scrollLeft = scroll[0]; tl2.scrollTop = scroll[1]; }
+}
+
+function renderAll() {
+  renderTop();
+  renderView();
+  if (S.drawer && S.drawer.kind === 'table') renderDrawer();
+}
+
+// ---------- панель брони ----------
+
+function openBooking(id) {
+  const b = S.data.bookings.find(x => x.id === String(id));
+  if (!b) { toast('Бронь не найдена на эту дату'); return; }
+  S.fresh.delete(b.id);
+  S.drawer = { kind: 'booking', b: Object.assign({}, b), orig: b, guest: S.data.guests[b.phone] || null, history: null };
+  renderDrawer();
+  if (b.phone) loadGuest(b.phone);
+}
+
+function newBooking(preset) {
+  const d = S.data;
+  const step = d.step;
+  let t = preset && preset.start !== undefined ? preset.start : d.date === d.today ? Math.ceil((d.now + 1) / step) * step : (d.hours ? Math.max(d.hours.open, 19 * 60) : 19 * 60);
+  if (d.hours && !(preset && preset.start !== undefined)) t = Math.min(Math.max(t, d.hours.open), d.hours.close - step);
+  S.drawer = {
+    kind: 'booking', isNew: true, guest: null, history: null,
+    b: Object.assign({ id: '', date: d.date, time: hm(t), start: t, dur: d.dur, guests: 2, table: '', name: '', phone: '', tg: '', occasion: '', wish: '', hostNote: '', status: ST.OK, source: 'Телефон' }, preset || {}),
+  };
+  S.drawer.b.time = hm(S.drawer.b.start);
+  renderDrawer();
+  setTimeout(() => { const f = $('#e-phone'); if (f) f.focus(); }, 260);
+}
+
+function openTable(id) {
+  S.drawer = { kind: 'table', id };
+  renderDrawer();
+}
+
+function loadGuest(phone) {
+  const dr = S.drawer;
+  call('hostGuest', phone).then(g => {
+    if (S.drawer !== dr) return;
+    dr.guest = g;
+    dr.history = g ? g.history : [];
+    if (g && dr.isNew && !dr.b.name && g.history.length) dr.b.name = g.history[0].name;
+    renderDrawer(true);
+  }).catch(() => {});
+}
+
+function busyTables(b) {
+  if (b.date !== S.data.date) return {};
+  const out = {};
+  S.data.bookings.forEach(x => {
+    if (x.id !== b.id && x.table && ACTIVE.includes(x.status) && b.start < x.start + x.dur && x.start < b.start + b.dur) out[x.table] = x;
+  });
+  return out;
+}
+
+function timeOptions(cur) {
+  const d = S.data, step = d.step, out = [];
+  const a = d.hours ? d.hours.open : 8 * 60, z = d.hours ? d.hours.close : 24 * 60;
+  for (let m = Math.min(a, 6 * 60); m < 24 * 60; m += step) out.push(m);
+  if (!out.includes(cur)) out.push(cur), out.sort((x, y) => x - y);
+  return out.map(m => `<option value="${hm(m)}" ${m === cur ? 'selected' : ''}>${hm(m)}${m < a || m >= z ? ' · вне часов' : ''}</option>`).join('');
+}
+
+function bookingDrawer(keepScroll) {
+  const dr = S.drawer, b = dr.b, d = S.data;
+  const g = dr.guest;
+  const busy = busyTables(b);
+  const fits = t => b.guests >= t.min && b.guests <= t.max;
+  const durs = [60, 90, 120, 150, 180, 240, 300, 360];
+  if (!durs.includes(b.dur)) durs.push(b.dur), durs.sort((x, y) => x - y);
+  const statusBtns = dr.isNew ? '' : `<div class="sactions">${[
+    [ST.OK, 'Принять'], [ST.REJECT, 'Отклонить'], [ST.IN, 'Гости пришли'], [ST.DONE, 'Ушли'], [ST.NOSHOW, 'Не пришли'], [ST.CANCEL, 'Отменить'],
+  ].map(([s, label]) => `<button class="sbtn ${b.status === s ? 'cur ' + ST_CLS[s] : ''} ${nextStatus(dr.orig.status) === s ? 'primary' : ''}" data-status="${s}" ${b.status === s ? 'disabled' : ''}>${label}</button>`).join('')}</div>`;
+  const zs = zones();
+  return `
+    <div class="dh">
+      <div style="flex:1;min-width:0">
+        <h2>${dr.isNew ? 'Новая бронь' : esc(b.name)}</h2>
+        <div class="sub">${dr.isNew ? esc(dateLong(b.date)) : `№${esc(b.id)} · ${esc(b.source)} · создана ${esc(b.created)}${b.changed ? ' · изм. ' + esc(b.changed) : ''}`}</div>
+      </div>
+      ${dr.isNew ? '' : `<span class="pill ${ST_CLS[dr.orig.status]}" style="margin-top:8px">${esc(dr.orig.status)}</span>`}
+      <button class="ibtn" data-act="close" aria-label="Закрыть">${ICON.close}</button>
+    </div>
+    <div class="db" id="db">
+      ${statusBtns}
+      ${dr.isNew ? '' : `<div class="tginfo">✈️ ${b.tg ? '@' + esc(b.tg) : 'username не указан'} · ${dr.orig.tgConnected ? '<b>бот подключён</b>' : 'бот не подключён' +
+        (dr.orig.tgLink ? ' · <button data-act="copylink">скопировать ссылку для гостя</button>' : '')}
+        ${dr.orig.reminded ? `<br>Напоминание отправлено ${esc(dr.orig.reminded.slice(11))} ${esc(dateNum(dr.orig.reminded.slice(0, 10)))} · ответ: <b>${esc(dr.orig.answer === 'Запрошено' ? (isStarted(dr.orig) ? 'нет ответа' : 'ждём') : dr.orig.answer || '—')}</b>` : ''}
+        ${dr.orig.status === ST.REJECT && dr.orig.reason ? `<br>Причина отказа: ${esc(dr.orig.reason)}` : ''}
+        ${dr.orig.rating ? `<br>Оценка визита: <b>★ ${esc(dr.orig.rating)}</b>${dr.orig.review ? ' — «' + esc(dr.orig.review) + '»' : ''}` : ''}</div>`}
+      ${b.wish && !dr.isNew ? `<div class="wish"><b>Пожелания гостя</b>${esc(b.wish)}</div>` : ''}
+      ${b.phone ? `<div class="gcard">
+        <div class="gtop"><a class="ph" href="tel:${esc(b.phone)}">${esc(fmtPhone(b.phone))}</a>
+          <span>${g ? (g.visits ? `<span class="tag ${g.visits >= 5 ? 'vip' : ''}">${g.visits >= 5 ? '★ ' : ''}${g.visits} ${plural(g.visits, 'визит', 'визита', 'визитов')}</span>` : '<span class="tag">первый визит</span>') : ''}
+          ${g && g.noShows ? `<span class="tag warn">неявок: ${g.noShows}</span>` : ''}${g && g.cancels ? `<span class="tag">отмен: ${g.cancels}</span>` : ''}${g && g.rating ? `<span class="tag">★ ${g.rating}</span>` : ''}</span></div>
+        ${g && g.last ? `<div style="font-size:12px;color:var(--muted);margin-top:6px">Последний визит ${dateNum(g.last)}</div>` : ''}
+        <div class="gnote"><textarea id="g-note" placeholder="Заметка о госте: аллергия, любимый стол, VIP…">${esc(g ? g.note : '')}</textarea>
+          <button class="btn ghost sm" data-act="gnote" style="height:40px">Сохранить</button></div>
+      </div>` : ''}
+      <div class="grid2">
+        <label class="fld"><span>Телефон</span><input id="e-phone" type="tel" value="${esc(b.phone ? fmtPhone(b.phone) : '')}" placeholder="+7 ___ ___-__-__"></label>
+        <label class="fld"><span>Имя</span><input id="e-name" value="${esc(b.name)}" maxlength="60"></label>
+      </div>
+      <label class="fld"><span>Telegram гостя</span><input id="e-tg" value="${esc(b.tg ? '@' + b.tg : '')}" placeholder="@username — бот напишет, когда гость нажмёт Start" autocapitalize="off" spellcheck="false"></label>
+      <div class="grid3">
+        <label class="fld"><span>Дата</span><input id="e-date" type="date" value="${esc(b.date)}"></label>
+        <label class="fld"><span>Время</span><select id="e-time">${timeOptions(b.start)}</select></label>
+        <label class="fld"><span>На сколько</span><select id="e-dur">${durs.map(m => `<option value="${m}" ${m === b.dur ? 'selected' : ''}>${m % 60 ? (m / 60).toFixed(1).replace('.', ',') + ' ч' : m / 60 + ' ч'}</option>`).join('')}</select></label>
+      </div>
+      <div class="grid2">
+        <label class="fld"><span>Гостей</span><div class="stepper"><button type="button" data-act="g-">−</button><input id="e-guests" type="number" min="1" max="200" value="${b.guests}"><button type="button" data-act="g+">+</button></div></label>
+        <label class="fld"><span>Стол</span><select id="e-table"><option value="">— без стола —</option>
+          ${zs.map(zn => `<optgroup label="${esc(zn)}">${d.tables.filter(t => t.zone === zn).map(t => {
+            const x = busy[t.id];
+            return `<option value="${esc(t.id)}" ${t.id === b.table ? 'selected' : ''}>Стол ${esc(t.id)} · ${t.min === t.max ? t.max : t.min + '–' + t.max} м.${x ? ' · занят ' + x.time + ' ' + x.name : fits(t) ? '' : ' · не по размеру'}</option>`;
+          }).join('')}</optgroup>`).join('')}</select></label>
+      </div>
+      <div class="grid2">
+        <label class="fld"><span>Повод</span><input id="e-occasion" value="${esc(b.occasion)}" maxlength="40" list="occ"></label>
+        <label class="fld"><span>Источник</span><select id="e-source">${d.sources.map(s => `<option ${s === b.source ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select></label>
+      </div>
+      <datalist id="occ"><option>День рождения</option><option>Свидание</option><option>Деловая встреча</option><option>Семейный обед</option><option>Годовщина</option></datalist>
+      ${dr.isNew ? `<label class="fld"><span>Статус</span><select id="e-status">${[ST.OK, ST.NEW, ST.IN].map(s => `<option ${s === b.status ? 'selected' : ''}>${s}</option>`).join('')}</select></label>` : ''}
+      <label class="fld"><span>Пожелания гостя</span><textarea id="e-wish" maxlength="300">${esc(b.wish)}</textarea></label>
+      <label class="fld"><span>Заметка хостес к брони</span><textarea id="e-hostNote" maxlength="300" placeholder="Видно только сотрудникам">${esc(b.hostNote)}</textarea></label>
+      ${dr.history && dr.history.filter(h => h.id !== b.id).length ? `<div class="hist"><h4>История гостя</h4>${dr.history.filter(h => h.id !== b.id).slice(0, 12).map(h => `
+        <div class="hrow"><span>${dateNum(h.date)} · ${esc(h.time)} · ${h.guests} гост.${h.table ? ' · стол ' + esc(h.table) : ''}</span><span class="pill ${ST_CLS[h.status]}">${esc(h.status)}</span></div>`).join('')}</div>` : ''}
+    </div>
+    <div class="df">
+      <button class="btn" data-act="save" style="flex:1;justify-content:center;height:44px">${dr.saving ? 'Сохраняем…' : dr.isNew ? 'Создать бронь' : 'Сохранить изменения'}</button>
+      <button class="btn ghost" data-act="close" style="height:44px">Закрыть</button>
+    </div>`;
+}
+
+function nextStatus(s) {
+  return s === ST.NEW ? ST.OK : s === ST.OK ? ST.IN : s === ST.IN ? ST.DONE : '';
+}
+
+function tableDrawer() {
+  const d = S.data, t = d.tables.find(x => x.id === S.drawer.id);
+  if (!t) return '';
+  const list = d.bookings.filter(b => b.table === t.id && (S.showCancel || b.status !== ST.CANCEL)).sort((x, y) => x.start - y.start);
+  const T = S.floorTime === null ? d.now : S.floorTime;
+  const st = tableState(t, T);
+  return `
+    <div class="dh"><div style="flex:1"><h2>Стол ${esc(t.id)}</h2><div class="sub">${esc(t.zone)} · ${t.min === t.max ? t.max : t.min + '–' + t.max} мест${t.online ? '' : ' · не продаётся онлайн'}</div></div>
+      <button class="ibtn" data-act="close" aria-label="Закрыть">${ICON.close}</button></div>
+    <div class="db">
+      <div class="sactions">
+        <button class="sbtn primary" data-act="table-new">Бронь на этот стол</button>
+        ${d.date === d.today && !(st.b && st.b.status === ST.IN) ? '<button class="sbtn" data-act="table-walkin">Посадить без брони</button>' : ''}
+      </div>
+      <div class="hist"><h4>Брони на ${esc(dateLong(d.date))}</h4></div>
+      ${list.length ? list.map(b => `<div class="tbook" data-id="${esc(b.id)}"><div class="t">${esc(b.time)}–${hm(b.start + b.dur)}</div>
+        <div class="n"><b>${esc(b.name)}</b><div style="font-size:12px;color:var(--muted)">${b.guests} гост.${b.occasion ? ' · ' + esc(b.occasion) : ''}</div></div>
+        <span class="pill ${ST_CLS[b.status]}">${esc(b.status)}</span></div>`).join('') : '<div style="color:var(--muted)">Свободен весь день</div>'}
+    </div>`;
+}
+
+function renderDrawer(keepScroll) {
+  const el = $('#drawer');
+  if (!S.drawer) { el.classList.remove('on'); $('#scrim').classList.remove('on'); el.setAttribute('aria-hidden', 'true'); return; }
+  const db = $('#db');
+  const top = db ? db.scrollTop : 0;
+  el.innerHTML = S.drawer.kind === 'table' ? tableDrawer() : S.drawer.kind === 'guest' ? guestDrawer() : bookingDrawer();
+  el.classList.add('on');
+  el.setAttribute('aria-hidden', 'false');
+  $('#scrim').classList.add('on');
+  if (keepScroll && $('#db')) $('#db').scrollTop = top;
+}
+
+function closeDrawer() { S.drawer = null; renderDrawer(); }
+
+/** Поля формы → S.drawer.b (без перерисовки). */
+function readForm() {
+  const b = S.drawer.b, v = id => { const el = $('#e-' + id); return el ? el.value : undefined; };
+  const phone = v('phone'); if (phone !== undefined) b.phone = phone;
+  b.name = v('name') ?? b.name;
+  b.date = v('date') || b.date;
+  if (v('time')) { b.time = v('time'); b.start = mins(b.time); }
+  b.dur = Number(v('dur')) || b.dur;
+  b.guests = Math.max(1, Number(v('guests')) || b.guests);
+  b.table = v('table') ?? b.table;
+  b.occasion = v('occasion') ?? b.occasion;
+  const tgv = v('tg'); if (tgv !== undefined) b.tg = tgv.trim().replace(/^@/, '');
+  b.source = v('source') || b.source;
+  if (v('status')) b.status = v('status');
+  b.wish = v('wish') ?? b.wish;
+  b.hostNote = v('hostNote') ?? b.hostNote;
+  return b;
+}
+
+function save(force) {
+  const dr = S.drawer;
+  if (!dr || dr.saving) return;
+  const b = readForm();
+  dr.saving = true;
+  renderDrawer(true);
+  call('hostSave', Object.assign({}, b, { id: dr.isNew ? '' : b.id, force: !!force })).then(res => {
+    dr.saving = false;
+    if (res.conflict) {
+      renderDrawer(true);
+      if (confirm('Стол ' + b.table + ' в это время занят:\n' + res.conflict.join('\n') + '\n\nСохранить всё равно?')) save(true);
+      return;
+    }
+    toast(dr.isNew ? 'Бронь создана' : 'Сохранено', res.booking.time + ' · ' + res.booking.name);
+    if (S.seen) S.seen.add(res.booking.id);
+    closeDrawer();
+    if (S.guestList) loadGuests();
+    if (res.booking.date !== S.date) S.date = res.booking.date;
+    loadDay();
+  }).catch(err => { dr.saving = false; renderDrawer(true); toast('Не сохранилось', err.message); });
+}
+
+function setStatus(id, status, reason) {
+  setBusy(true);
+  call('hostStatus', id, status, reason || '').then(b => {
+    setBusy(false);
+    const i = S.data.bookings.findIndex(x => x.id === b.id);
+    if (i >= 0) S.data.bookings[i] = b;
+    if (S.drawer && S.drawer.kind === 'booking' && S.drawer.b.id === b.id) { S.drawer.orig = b; S.drawer.b.status = b.status; renderDrawer(true); }
+    renderAll();
+    toast(b.name + ' · ' + b.status);
+  }).catch(err => { setBusy(false); toast('Не получилось', err.message); });
+}
+
+// ---------- гости ----------
+
+function loadGuests() {
+  call('hostGuests').then(list => { S.guestList = list; if (S.tab === 'guests') renderView(); })
+    .catch(err => toast('Гости не загрузились', err.message));
+}
+
+function renderGuests() {
+  if (!S.guestList) { $('#view').innerHTML = '<div class="empty"><b>Загружаем гостей…</b></div>'; return; }
+  const q = S.q.trim().toLowerCase(), qd = q.replace(/\D/g, ''), qt = q.replace(/^@/, '');
+  const list = S.guestList.filter(g => !q || (g.name || '').toLowerCase().includes(q) ||
+    (qd.length >= 3 && g.phone.replace(/\D/g, '').includes(qd)) || (qt && (g.tg || '').toLowerCase().includes(qt)));
+  if (!list.length) { $('#view').innerHTML = `<div class="empty"><b>${q ? 'Никого не нашли' : 'Гостей пока нет'}</b>${q ? 'Попробуйте имя, телефон или @username' : 'Карточки появятся с первыми бронями'}</div>`; return; }
+  $('#view').innerHTML = `<div class="list" style="max-width:1200px">
+    <div class="grow head"><span>Гость</span><span>Telegram</span><span>Визиты</span><span>Неявки</span><span>Оценка</span><span>Был</span><span>Следующая бронь</span><span>Заметка</span></div>
+    ${list.map(g => `<div class="grow" data-guest="${esc(g.phone)}">
+      <div><b>${esc(g.name || '—')}</b><span class="mut">${esc(fmtPhone(g.phone))}</span></div>
+      <div>${g.tg ? (g.tgConnected ? '<span class="tag tg">✈️ @' + esc(g.tg) + '</span>' : '<span class="mut">@' + esc(g.tg) + '</span>') : '<span class="mut">—</span>'}</div>
+      <div>${g.visits >= 5 ? '<span class="tag vip">★ ' + g.visits + '</span>' : g.visits || '<span class="mut">0</span>'}</div>
+      <div>${g.noShows ? '<span class="tag warn">' + g.noShows + '</span>' : '<span class="mut">0</span>'}</div>
+      <div>${g.rating ? '★ ' + g.rating : '<span class="mut">—</span>'}</div>
+      <div class="mut">${g.last ? dateNum(g.last) : '—'}</div>
+      <div>${g.next ? '<b style="font-size:13px">' + dateNum(g.next.slice(0, 10)) + ' ' + esc(g.next.slice(11)) + '</b>' : '<span class="mut">—</span>'}</div>
+      <div class="mut" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(g.note || '')}</div>
+    </div>`).join('')}</div>`;
+}
+
+function openGuest(phone) {
+  S.drawer = { kind: 'guest', phone, g: (S.guestList || []).find(x => x.phone === phone) || null };
+  renderDrawer();
+  const dr = S.drawer;
+  call('hostGuest', phone).then(g => { if (S.drawer === dr) { dr.g = g; renderDrawer(true); } }).catch(() => {});
+}
+
+function guestDrawer() {
+  const g = S.drawer.g || { phone: S.drawer.phone };
+  const hist = g.history || [];
+  return `
+    <div class="dh"><div style="flex:1;min-width:0"><h2>${esc(g.name || 'Гость')}</h2>
+      <div class="sub"><a class="ph" href="tel:${esc(g.phone)}" style="color:var(--accent);font-weight:800;text-decoration:none">${esc(fmtPhone(g.phone))}</a>
+      ${g.tg ? ' · ✈️ @' + esc(g.tg) + (g.tgConnected ? ' · бот подключён' : ' · бот не подключён') : ''}</div></div>
+      <button class="ibtn" data-act="close" aria-label="Закрыть">${ICON.close}</button></div>
+    <div class="db" id="db">
+      <div class="gstat"><div><b>${g.visits || 0}</b>визитов</div><div><b>${g.noShows || 0}</b>неявок</div><div><b>${g.cancels || 0}</b>отмен</div><div><b>${g.rating ? '★ ' + g.rating : '—'}</b>оценка</div></div>
+      ${g.last ? `<div style="font-size:13px;color:var(--muted);margin-bottom:10px">Последний визит ${dateNum(g.last)}${g.next ? ' · следующая бронь ' + dateNum(g.next.slice(0, 10)) + ' ' + esc(g.next.slice(11)) : ''}</div>` : ''}
+      <div class="fld"><span>Заметка о госте — видят все хостес</span>
+        <div class="gnote" style="margin-top:0"><textarea id="g-note2" placeholder="Аллергия, любимый стол, VIP, дети…">${esc(g.note || '')}</textarea>
+        <button class="btn ghost sm" data-act="gnote2" style="height:40px">Сохранить</button></div></div>
+      <div class="sactions"><button class="sbtn primary" data-act="guest-new">Новая бронь для гостя</button></div>
+      ${g.reviews && g.reviews.length ? `<div class="hist"><h4>Отзывы</h4>${g.reviews.map(r => `<div class="review"><b>★ ${r.rating}</b> · ${dateNum(r.date)}<br>«${esc(r.text)}»</div>`).join('')}</div>` : ''}
+      <div class="hist"><h4>История броней</h4>${hist.length ? hist.map(h => `<div class="tbook" data-hist="${esc(h.id)}" data-hdate="${esc(h.date)}">
+        <div class="t" style="min-width:110px">${dateNum(h.date)} ${esc(h.time)}</div>
+        <div class="n">${h.guests} гост.${h.table ? ' · стол ' + esc(h.table) : ''}${h.rating ? ' · ★ ' + esc(h.rating) : ''}${h.answer === 'Придёт' ? ' · ✓' : ''}</div>
+        <span class="pill ${ST_CLS[h.status]}">${esc(h.status)}</span></div>`).join('') : '<div style="color:var(--muted)">Загружаем…</div>'}</div>
+    </div>`;
+}
+
+// ---------- события ----------
+
+document.addEventListener('click', e => {
+  const t = e.target;
+  const tab = t.closest('[data-tab]');
+  if (tab) { S.tab = tab.dataset.tab; store.set('tab', S.tab); S.editLayout = false; if (S.tab === 'guests') loadGuests(); renderAll(); if (S.tab === 'timeline') scrollTimelineToNow(); return; }
+  const day = t.closest('[data-date]');
+  if (day) { S.date = day.dataset.date; loadDay(); return; }
+  const quick = t.closest('[data-quick]');
+  if (quick) { e.stopPropagation(); setStatus(quick.dataset.quick, quick.dataset.to); return; }
+  const stBtn = t.closest('[data-status]');
+  if (stBtn && S.drawer) {
+    const s = stBtn.dataset.status;
+    if (s === ST.CANCEL && !confirm('Отменить бронь ' + S.drawer.b.name + '? Гость получит сообщение в Telegram.')) return;
+    let reason = '';
+    if (s === ST.REJECT) {
+      reason = prompt('Причина отказа — её увидит гость:', 'Нет свободных столов на это время');
+      if (reason === null) return;
+    }
+    setStatus(S.drawer.b.id, s, reason);
+    return;
+  }
+  const gr = t.closest('[data-guest]');
+  if (gr) { openGuest(gr.dataset.guest); return; }
+  const hi = t.closest('[data-hist]');
+  if (hi) {
+    if (hi.dataset.hdate === S.date) openBooking(hi.dataset.hist);
+    else { S.openId = hi.dataset.hist; S.date = hi.dataset.hdate; S.tab = S.tab === 'guests' ? 'list' : S.tab; closeDrawer(); loadDay(); }
+    return;
+  }
+  const ft = t.closest('[data-ft]');
+  if (ft && !S.editLayout) { openTable(ft.dataset.ft); return; }
+  const item = t.closest('[data-id]');
+  if (item) { openBooking(item.dataset.id); return; }
+  const track = t.closest('[data-track]');
+  if (track && !t.closest('.blk')) {
+    const { a } = dayRange(), step = S.data.step;
+    const x = e.clientX - track.getBoundingClientRect().left;
+    const start = Math.floor((a + x / PPM) / step) * step;
+    newBooking({ table: track.dataset.track, start });
+    return;
+  }
+  const act = t.closest('[data-act]');
+  if (!act) { if (t.id === 'scrim') closeDrawer(); return; }
+  switch (act.dataset.act) {
+    case 'prev': S.date = addDays(S.data.date, -1); loadDay(); break;
+    case 'nextday': S.date = addDays(S.data.date, 1); loadDay(); break;
+    case 'today': S.date = S.data.today; loadDay().then(scrollTimelineToNow); break;
+    case 'new': newBooking(); break;
+    case 'theme': { const th = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = th; store.set('theme', th); break; }
+    case 'close': closeDrawer(); break;
+    case 'copylink': {
+      const link = S.drawer.orig.tgLink;
+      const done = () => toast('Ссылка скопирована', 'Отправьте гостю: по ней он подключит бота к брони');
+      if (navigator.clipboard) navigator.clipboard.writeText(link).then(done, () => prompt('Ссылка для гостя:', link));
+      else prompt('Ссылка для гостя:', link);
+      break;
+    }
+    case 'gnote2': {
+      const phone = S.drawer.phone;
+      call('hostGuestNote', phone, $('#g-note2').value).then(note => {
+        if (S.drawer && S.drawer.g) S.drawer.g.note = note;
+        const row = (S.guestList || []).find(x => x.phone === phone); if (row) row.note = note;
+        if (S.data.guests[phone]) S.data.guests[phone].note = note;
+        toast('Заметка о госте сохранена');
+        renderView();
+      }).catch(err => toast('Не сохранилось', err.message));
+      break;
+    }
+    case 'guest-new': { const g = S.drawer.g || {}; newBooking({ name: g.name || '', phone: g.phone || '', tg: g.tg || '' }); break; }
+    case 'save': save(false); break;
+    case 'g-': case 'g+': { readForm(); S.drawer.b.guests = Math.max(1, S.drawer.b.guests + (act.dataset.act === 'g+' ? 1 : -1)); renderDrawer(true); break; }
+    case 'gnote': {
+      const b = readForm();
+      call('hostGuestNote', b.phone, $('#g-note').value).then(note => {
+        if (S.data.guests[b.phone]) S.data.guests[b.phone].note = note;
+        if (S.drawer && S.drawer.guest) S.drawer.guest.note = note;
+        toast('Заметка о госте сохранена');
+        renderView();
+      }).catch(err => toast('Не сохранилось', err.message));
+      break;
+    }
+    case 'table-new': { const id = S.drawer.id; const tb = S.data.tables.find(x => x.id === id); newBooking({ table: id, guests: Math.min(tb.max, Math.max(tb.min, 2)) }); break; }
+    case 'table-walkin': {
+      const id = S.drawer.id, tb = S.data.tables.find(x => x.id === id), step = 5;
+      newBooking({ table: id, guests: Math.min(tb.max, Math.max(tb.min, 2)), start: Math.floor(S.data.now / step) * step, status: ST.IN, source: 'Без брони', name: 'Гость без брони' });
+      break;
+    }
+    case 'floor-now': S.floorTime = null; renderView(); break;
+    case 'layout-edit': S.editLayout = true; S.layoutDirty = {}; renderView(); break;
+    case 'layout-cancel': S.editLayout = false; S.layoutDirty = {}; renderView(); break;
+    case 'layout-save': {
+      const pos = Object.keys(S.layoutDirty).map(id => ({ id, x: S.layoutDirty[id].x, y: S.layoutDirty[id].y }));
+      if (!pos.length) { S.editLayout = false; renderView(); break; }
+      setBusy(true);
+      call('hostLayout', pos).then(tables => {
+        setBusy(false); S.data.tables = tables; S.editLayout = false; S.layoutDirty = {}; renderView(); toast('Схема сохранена');
+      }).catch(err => { setBusy(false); toast('Не сохранилось', err.message); });
+      break;
+    }
+  }
+});
+
+// перетаскивание столов в режиме «Расставить столы»
+let drag = null;
+document.addEventListener('pointerdown', e => {
+  if (!S.editLayout) return;
+  const ft = e.target.closest('[data-ft]');
+  if (!ft) return;
+  e.preventDefault();
+  drag = { el: ft, id: ft.dataset.ft, plan: ft.closest('.plan').getBoundingClientRect() };
+  ft.setPointerCapture(e.pointerId);
+});
+document.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const x = Math.min(95, Math.max(5, (e.clientX - drag.plan.left) / drag.plan.width * 100));
+  const y = Math.min(95, Math.max(5, (e.clientY - drag.plan.top) / drag.plan.height * 100));
+  drag.el.style.left = x + '%';
+  drag.el.style.top = y + '%';
+  S.layoutDirty[drag.id] = { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
+});
+document.addEventListener('pointerup', () => { drag = null; });
+
+document.addEventListener('input', e => {
+  if (e.target.id === 'q') { S.q = e.target.value; renderView(); }
+  if (e.target.id === 'ftime') { S.floorTime = Number(e.target.value); renderView(); const r = $('#ftime'); if (r) r.focus(); }
+});
+document.addEventListener('change', e => {
+  const id = e.target.id;
+  if (id === 'dInput' && e.target.value) { S.date = e.target.value; loadDay(); }
+  if (id === 'showCancel') { S.showCancel = e.target.checked; store.set('showCancel', S.showCancel); renderAll(); }
+  if (S.drawer && S.drawer.kind === 'booking' && ['e-time', 'e-dur', 'e-date', 'e-guests', 'e-table'].includes(id)) { readForm(); renderDrawer(true); }
+  if (id === 'e-phone' && S.drawer) {
+    const digits = e.target.value.replace(/\D/g, '');
+    if (digits.length >= 10) { readForm(); loadGuest(e.target.value); }
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && S.drawer) closeDrawer();
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') { e.preventDefault(); $('#q').focus(); }
+});
+
+// данные дня обновляются раз в 30 секунд; новые брони с сайта — звук и уведомление
+setInterval(() => { if (!document.hidden && !(S.drawer && S.drawer.saving)) loadDay(true); }, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && S.data) loadDay(true); });
+
+loadDay();
+if (S.tab === 'guests') loadGuests();
+</script>
+<script>
+window.BOOKING_API = 'https://script.google.com/macros/s/AKfycbwItXTjwO1YLe_Ii2HHGlEk98PuG1MVhB9IumvDWhrVyhf9itU9Dy7I-dwn8YBJPwCMvA/exec';
+(function () {
+  var q = new URLSearchParams(location.search), url = window.BOOKING_API + '?api=hostboot';
+  ['b', 'key', 'date', 'id'].forEach(function (k) { if (q.get(k)) url += '&' + k + '=' + encodeURIComponent(q.get(k)); });
+  fetch(url).then(function (r) { return r.json(); }).then(function (j) {
+    if (j.error) throw new Error(j.error);
+    window.__BOOT__ = j.result;
+    var s = document.createElement('script');
+    s.textContent = document.getElementById('main-js').textContent;
+    document.body.appendChild(s);
+  }).catch(function (e) {
+    document.body.innerHTML = '<div style="padding:48px 20px;font:16px/1.5 system-ui,sans-serif;text-align:center;color:#333">' +
+      '<b>Не удалось загрузить страницу</b><br>' + String(e.message || e).replace(/</g, '&lt;') +
+      '<br><br>Обновите страницу через минуту.</div>';
+  });
+})();
+</script>
+</body>
+</html>
